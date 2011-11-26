@@ -1,4 +1,4 @@
-body { font-family:Georgia, serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; }
+body { font-family:Georgia, serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; line-height:1.5; }
 a { color:#44f; text-decoration:none; }
 .clearer { clear:both; }
 #sitename { float:left; font-size:28px; margin-top:14px; font-weight:bold; color:#333; text-shadow: 0 1px 0 #fff}
@@ -10,6 +10,7 @@ a { color:#44f; text-decoration:none; }
 #content .post_link { font-size:20px; }
 #content .date { color:#aaa; padding-right:20px; text-shadow: 0 1px 0 #ffffff; }
 #content .info { color:#aaa; }
+#content .post_content { margin-bottom:1.625em; }
 #footer { text-align:center; margin-top:40px; color:#888; }
 pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#FBFCFF; color:#000; font-family: monospace; border:solid 1px #afafaf; }
 pre * { font-family: monospace; }

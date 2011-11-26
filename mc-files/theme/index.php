@@ -26,10 +26,10 @@
 <?php if (mc_is_post()) { ?>
     <h1><?php mc_the_title(); ?></h1>
     <p class="info">发表于: <?php mc_the_date(); ?>&nbsp;<?php mc_the_time(); ?>, 标签: <?php mc_the_tags(); ?></p>
-    <div><?php mc_the_content(); ?></div>
+    <div class="post_content"><?php mc_the_content(); ?></div>
 <?php } else if (mc_is_page()) { ?>
     <h1><?php mc_the_title(); ?></h1>
-    <div><?php mc_the_content(); ?></div>
+    <div class="post_content"><?php mc_the_content(); ?></div>
 <?php } else { ?>
 <?php   if (mc_is_tag()) { ?>
     <div id="page_info">标签：<?php mc_tag_name(); ?></div>
