@@ -12,7 +12,7 @@ MiniCMS是一个针对个人网站设计的微型内容管理系统。它的特�
 -------
 
 1. 将 mc_admin、mc_files、index.php 上传到网站根目录
-2. 进入MiniCMS后台，例如：http://1234n.com/mc-admin/，默认帐号：admin，默认密码：admin
+2. 进入MiniCMS后台，默认帐号：admin，默认密码：admin，例如：http://1234n.com/mc-admin/
 3. 进入“设置”页面修改帐号密码
 4. 开始使用
 
