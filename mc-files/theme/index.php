@@ -35,7 +35,9 @@
     <div id="page_info">标签：<?php mc_tag_name(); ?></div>
 <?php   } ?>
 <?php   while (mc_next_post()) { ?>
-    <p class="post_link"><span class="date"><?php mc_the_date(); ?></span><?php mc_the_link(); ?></p>
+    <div class="post_link"><span class="date"><?php mc_the_date(); ?></span><?php mc_the_link(); ?>
+    <div class="post_tags"><?php mc_the_tags('','',''); ?></div>
+    </div>
 <?php   } ?>
 <?php } ?>
   </div>

@@ -1,5 +1,6 @@
 body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; }
 a { color:#44f; text-decoration:none; }
+a:hover { color:#bc0000; }
 p { padding:0; margin:16px 0;}
 .clearer { clear:both; }
 #sitename { float:left; font-size:28px; margin-top:14px; color:#333; text-shadow: 0 1px 0 #fff}
@@ -7,12 +8,17 @@ p { padding:0; margin:16px 0;}
 #navbar { float:right; }
 #navbar ul, #navbar li { float:left; list-style:none; }
 #navbar a { color:#44F; font-size:18px;  display:block; padding:10px 15px; }
+#navbar a:hover { color:#bc0000; }
+#page_info { font-size:16px; margin-bottom:20px; }
 #content { width:888px; margin:0 auto; }
 #content h1 { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; }
-#content .post_link { font-size:20px; }
+#content .post_link { font-size:20px; padding:10px 0; }
 #content .date { color:#aaa; padding-right:20px; text-shadow: 0 1px 0 #ffffff; }
 #content .info { color:#aaa; }
 #content .post_content { margin-bottom:1.625em; }
+#content .post_tags { margin-left:140px; }
+#content .post_tags a { font-size:11px; color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;}
+#content .post_tags a:hover { background:#bc0000; }
 #footer { text-align:center; margin-top:40px; color:#888; }
 pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#FBFCFF; color:#000; font-family: monospace; border:solid 1px #afafaf; }
 pre * { font-family: monospace; }
