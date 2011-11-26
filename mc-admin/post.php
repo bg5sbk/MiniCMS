@@ -217,7 +217,8 @@ function do_filter()
 <table colspan="0" rowspan="0" cellpadding="0" cellspacing="0" id="list">
   <thead>
     <tr>
-    <td style="width:20px"><input type="checkbox" name="ids" onclick="if(this.checked==true) { check_all('ids'); } else { clear_all('ids'); }" value=""/></td><td>标题</td><td style="width:20%">标签</td><td style="width:15%">日期</td>
+    <td style="width:20px"><input type="checkbox" name="ids" onclick="if(this.checked==true) { check_all('ids'); } else { clear_all('ids'); }" value=""/></td>
+    <td>标题</td><td style="width:25%">标签</td><td style="width:15%">日期</td>
     </tr>
   </thead>
   <tbody>
@@ -229,7 +230,7 @@ function do_filter()
       <td>
         <a href="post-edit.php?id=<?php echo $post_id; ?>"><?php echo htmlspecialchars($post['title']);?></a>
         <div>
-          <a href="post-edit.php?id=<?php echo $post_id; ?>&state=<?php echo $state; ?>">编辑</a>&nbsp;|&nbsp;
+          <a href="post-edit.php?id=<?php echo $post_id; ?>">编辑</a>&nbsp;|&nbsp;
           <?php if ($state == 'delete') { ?>
           <a href="?revert=<?php echo $post_id; ?>&state=<?php echo $state; ?>">还原</a>&nbsp;|&nbsp;
           <a href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>">删除</a>&nbsp;|&nbsp;

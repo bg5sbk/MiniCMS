@@ -212,14 +212,14 @@ function do_filter()
     </tr>
   </thead>
   <tbody>
-  <?php sort($page_ids); for ($i = 0; $i < $page_count; $i ++) { $page_id = $page_ids[$i]; $page = $mc_pages[$page_id]; ?>
+  <?php if ($page_ids != NULL) sort($page_ids); for ($i = 0; $i < $page_count; $i ++) { $page_id = $page_ids[$i]; $page = $mc_pages[$page_id]; ?>
   <?php if (isset($_GET['date']) && $_GET['date'] != '' && $_GET['date'] != $page['date']) continue; ?>
     <tr<?php if ($i % 2 == 0) echo ' class="alt"'; ?>>
       <td><input type="checkbox" name="ids" value="<?php echo $page_id; ?>"/></td>
       <td>
-        <a href="page-edit.php?id=<?php echo $page_id; ?>"><?php echo htmlspecialchars($page['title']);?></a>
+        <a href="page-edit.php?file=<?php echo $page['file']; ?>"><?php echo htmlspecialchars($page['title']);?></a>
         <div>
-          <a href="page-edit.php?id=<?php echo $page_id; ?>&state=<?php echo $state; ?>">编辑</a>&nbsp;|&nbsp;
+          <a href="page-edit.php?file=<?php echo $page['file']; ?>">编辑</a>&nbsp;|&nbsp;
           <?php if ($state == 'delete') { ?>
           <a href="?revert=<?php echo $page_id; ?>&state=<?php echo $state; ?>">还原</a>&nbsp;|&nbsp;
           <a href="?delete=<?php echo $page_id; ?>&state=<?php echo $state; ?>">删除</a>&nbsp;|&nbsp;

@@ -1,160 +1,152 @@
-<?php require 'head.php' ?>
 <?php
-$display_info = false;
+require 'head.php';
 
-if (isset($_POST['save_draft']) || isset($_POST['save_publish'])) {
-  $post_title = $_POST['title'];
-  $post_content = $_POST['content'];
-  $post_tags = explode(',', $_POST['tags']);
+$post_id      = '';
+$post_state   = '';
+$post_title   = '';
+$post_content = '';
+$post_tags    = array();
+$error_msg    = '';
+$succeed      = false;
   
-  $post_tags_count = count($post_tags);
+if (isset($_POST['_IS_POST_BACK_'])) {
+  $post_id      = $_POST['id'];
+  $post_state   = $_POST['state'];
+  $post_title   = trim($_POST['title']);
+  $post_content = trim($_POST['content']);
+  $post_tags    = explode(',', trim($_POST['tags']));
+  $post_date    = date("Y-m-d");
+  $post_time    = date("H:i:s");
   
-  for ($i = 0; $i < $post_tags_count; $i ++) {
-    if (trim($post_tags[$i]) == '') {
-      unset($post_tags[$i]);
-      $i --;
-      $post_tags_count --;
-    }
-  }
-  
-  $data = array(
-    'title' => $post_title,
-    'content' => $post_content,
-    'tags' => $post_tags
-  );
-  
-  if (isset($_POST['save_publish'])) {
-    $index_file = dirname(dirname(__FILE__)).'/mc-files/posts/index/publish.php';
+  if ($post_title == '') {
+    $error_msg = '文章标题不能为空';
   }
   else {
-    $index_file = dirname(dirname(__FILE__)).'/mc-files/posts/index/draft.php';
-  }
-  
-  if (!isset($_GET['id'])) {
-    require $index_file;
-  
-    $file_names = shorturl($_POST['title']);
-
-    foreach ($file_names as $file_name) {
-      $file_path = dirname(dirname(__FILE__)).'/mc-files/posts/data/'.$file_name.'.dat';
+    if ($post_id == '') {
+      $file_names = shorturl($post_title);
+      
+      foreach ($file_names as $file_name) {
+        $file_path = '../mc-files/posts/data/'.$file_name.'.dat';
         
-      if (!is_file($file_path)) {
-        $post_id = $file_name;
-        
-        $data['id'] = $file_name;
-        $data['date'] = date("Y-m-d");
-        $data['time'] = date("H:i:s");
-        
-        $mc_posts = array_merge(
-          array($post_id => array(
-          'title' => $post_title,
-          'tags' => $post_tags,
-          'date' => $data['date'],
-          'time' => $data['time']
-          )),
-          $mc_posts
-        );
-        
-        file_put_contents($index_file, "<?php\n\$mc_posts=".var_export($mc_posts, true)."\n?>");
-        file_put_contents($file_path, serialize($data));
-        break;
+        if (!is_file($file_path)) {
+          $post_id = $file_name;
+          break;
+        }
       }
     }
-  } else {
-    if ($_POST['state'] == 'publish') {
-      $state = 'publish';
-      $index_file2 = dirname(dirname(__FILE__)).'/mc-files/posts/index/publish.php';
-    } else if ($_POST['state'] == 'delete') {
-      $state = 'draft';
-      $index_file2 = dirname(dirname(__FILE__)).'/mc-files/posts/index/delete.php';
-    } else {
-      $state = 'draft';
-      $index_file2 = dirname(dirname(__FILE__)).'/mc-files/posts/index/draft.php';
-    }
-    
-    require $index_file2;
-    
-    $post_id = $_POST['id'];
+    else {
+      $file_path = '../mc-files/posts/data/'.$post_id.'.dat';
   
-    $file_path = dirname(dirname(__FILE__)).'/mc-files/posts/data/'.$_POST['id'].'.dat';
-    
-    if (is_file($file_path)) {
-      if (isset($_POST['save_publish']) && $state != 'publish') {
-        $need_delete = true;
-      }
-      else if (isset($_POST['save_draft']) && $state != 'draft'){
-        $need_delete = true;
-      }
+      $data = unserialize(file_get_contents($file_path));
       
-      $post = $mc_posts[$post_id];
+      $post_old_state = $data['state'];
       
-      if ($need_delete) {
+      if ($post_old_state != $post_state) {
+        $index_file = '../mc-files/posts/index/'.$post_old_state.'.php';
+        
+        require $index_file;
+        
         unset($mc_posts[$post_id]);
         
-        file_put_contents($index_file2, "<?php\n\$mc_posts=".var_export($mc_posts, true)."\n?>");
+        file_put_contents($index_file,
+          "<?php\n\$mc_posts=".var_export($mc_posts, true)."\n?>"
+        );
       }
-      
-      require $index_file;
-    
-      $post['title'] = $post_title;
-      $post['tags']  = $post_tags;
-      
-      $mc_posts[$post_id] = $post;
-    
-      file_put_contents($index_file, "<?php\n\$mc_posts=".var_export($mc_posts, true)."\n?>");
-      file_put_contents($file_path, serialize($data));
     }
+    
+    $data = array(
+      'id'    => $post_id,
+      'state' => $post_state,
+      'title' => $post_title,
+      'tags'  => $post_tags,
+      'date'  => $post_date,
+      'time'  => $post_time,
+    );
+    
+    $index_file = '../mc-files/posts/index/'.$post_state.'.php';
+    
+    require $index_file;
+    
+    $mc_posts[$post_id] = $data;
+    
+    file_put_contents($index_file,
+      "<?php\n\$mc_posts=".var_export($mc_posts, true)."\n?>"
+    );
+    
+    $data['content'] = $post_content;
+    
+    file_put_contents($file_path, serialize($data));
   }
-  
-  $display_info = true;
 } else if (isset($_GET['id'])) {
-  $post_id = $_GET['id'];
-  $post_state = $_GET['state'];
-  
-  $file_path = dirname(dirname(__FILE__)).'/mc-files/posts/data/'.$_GET['id'].'.dat';
+  $file_path = '../mc-files/posts/data/'.$_GET['id'].'.dat';
   
   $data = unserialize(file_get_contents($file_path));
-
-  $post_title = $data['title'];
+  
+  $post_id      = $data['id'];
+  $post_state   = $data['state'];
+  $post_title   = $data['title'];
   $post_content = $data['content'];
-  $post_tags = $data['tags'];
-} else {
-  $post_title = "在此输入标题";
-  $post_content = "";
-  $post_tags = array();
+  $post_tags    = $data['tags'];
 }
 ?>
+<script type="text/javascript">
+function empty_textbox_focus(target){
+  if (target.temp_value != undefined && target.value != target.temp_value)
+    return;
+  
+  target.temp_value = target.value;
+  target.value='';
+  target.style.color='#000';
+}
+
+function empty_textbox_blur(target) {
+  if (target.value == '') {
+    target.style.color='#888';
+    target.value = target.temp_value;
+  }
+}
+</script>
 <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-<?php if ($display_info) { ?>
-<div class="updated">保存成功！ <a href="#">查看</a></div>
-<?php } ?>
-<div class="admin_page_name">撰写新文章</div>
-<div style="margin-bottom:20px;">
-<input name="title" type="text"
-value="<?php echo htmlspecialchars($post_title); ?>"
-style="width:99%;border:solid 1px #ccc; font-size:20px; padding:3px 4px; border-radius:3px; <?php if (!isset($post_id)) {?>color:#888;<?php } ?>"
-<?php if (!isset($post_id)) {?>
-onfocus="if (this.temp_value != undefined && this.value != this.temp_value) return; this.temp_value = this.value; this.value=''; this.style.color='#000';" onblur="if (this.value == '') { this.style.color='#888'; this.value = this.temp_value; }"
-<?php } ?>/>
-</div>
-<div style="margin-bottom:20px;">
-<textarea name="content" style="height:400px;width:99%;font-size:13px;border:solid 1px #ccc;padding:3px 4px; border-radius:3px; resize:vertical;"><?php echo htmlspecialchars($post_content); ?></textarea>
-</div>
-<div style="margin-bottom:20px;">
-<input name="tags" type="text"
-value="<?php if (count($post_tags) == 0) { echo "在此输入标签，多个标签用英语逗号(,)分隔"; } else { echo htmlspecialchars(implode(',', $post_tags)); } ?>"
-style="width:99%;border:solid 1px #ccc; font-size:20px; padding:3px 4px; border-radius:3px; <?php if (!isset($post_id)) {?>color:#888;<?php } ?>" 
-<?php if (!isset($post_id)) { ?>
-onfocus="if (this.temp_value != undefined && this.value != this.temp_value) return; this.temp_value = this.value; this.value=''; this.style.color='#000';" onblur="if (this.value == '') { this.style.color='#888'; this.value = this.temp_value; }"
-<?php } ?>/>
-</div>
-<div style="text-align:right">
-<?php if (isset($post_id)) { ?>
-<input type="hidden" name="id" value="<?php echo $post_id; ?>"/>
-<input type="hidden" name="state" value="<?php echo $post_state; ?>"/>
-<?php } ?>
-<input type="submit" name="save_draft" value="保存草稿" style="padding:6px 20px; margin-right:8px;"/>
-<input type="submit" name="save_publish" value="发布" style="padding:6px 20px;"/>
-</div>
+  <input type="hidden" name="_IS_POST_BACK_" value=""/>
+  <?php if ($succeed) { ?>
+  <div class="updated">文章已保存！ <a href="#">查看</a></div>
+  <?php } ?>
+  <div class="admin_page_name">
+  <?php if ($post_id == '') echo "撰写文章"; else echo "编辑文章"; ?>
+  </div>
+  <div style="margin-bottom:20px;">
+    <input name="title" type="text" class="edit_textbox" value="<?php
+    if ($post_title == "") {
+      echo '在此输入标题" " style="color:#888;" onfocus="empty_textbox_focus(this)" onblur="empty_textbox_blur(this)';
+    }
+    else {
+      echo htmlspecialchars($post_title);
+    }
+    ?>"/>
+  </div>
+  <div style="margin-bottom:20px;">
+    <textarea name="content" class="edit_textarea"><?php echo htmlspecialchars($post_content); ?></textarea>
+  </div>
+  <div style="margin-bottom:20px;">
+    <input name="tags" type="text" class="edit_textbox" value="<?php
+    if (count($post_tags) == 0) {
+      echo '在此输入标签，多个标签用英语逗号(,)分隔" " style="color:#888;" onfocus="empty_textbox_focus(this)" onblur="empty_textbox_blur(this)';
+    }
+    else {
+      echo htmlspecialchars(implode(',', $post_tags));
+    }
+    ?>"/>
+  </div>
+  <div style="margin-bottom:20px;text-align:right">
+    状态：
+    <select name="state" style="width:100px;">
+      <option value="draft" <?php if ($post_state == 'draft') echo 'selected="selected"'; ?>>草稿</option>
+      <option value="publish" <?php if ($post_state == 'publish') echo 'selected="selected"'; ?>>发布</option>
+    </select>
+  </div>
+  <div style="text-align:right">
+    <input type="hidden" name="id" value="<?php echo $post_id; ?>"/>
+    <input type="submit" name="save" value="保存" style="padding:6px 20px;"/>
+  </div>
 </form>
 <?php require 'foot.php' ?>
