@@ -1,12 +1,14 @@
-body { font-family:Georgia, serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; line-height:1.5; }
+body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; }
 a { color:#44f; text-decoration:none; }
+p { padding:0; margin:16px 0;}
 .clearer { clear:both; }
-#sitename { float:left; font-size:28px; margin-top:14px; font-weight:bold; color:#333; text-shadow: 0 1px 0 #fff}
+#sitename { float:left; font-size:28px; margin-top:14px; color:#333; text-shadow: 0 1px 0 #fff}
+#header { height:64px; }
 #navbar { float:right; }
 #navbar ul, #navbar li { float:left; list-style:none; }
 #navbar a { color:#44F; font-size:18px;  display:block; padding:10px 15px; }
 #content { width:888px; margin:0 auto; }
-#content h1 { font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; }
+#content h1 { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; }
 #content .post_link { font-size:20px; }
 #content .date { color:#aaa; padding-right:20px; text-shadow: 0 1px 0 #ffffff; }
 #content .info { color:#aaa; }

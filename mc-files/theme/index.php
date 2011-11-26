@@ -20,8 +20,8 @@
         <li><a href="/?about/">关于</a></li>
       </ul>
     </div>
+    <div class="clearer"></div>
   </div>
-  <div class="clearer"></div>
   <div id="content">
 <?php if (mc_is_post()) { ?>
     <h1><?php mc_the_title(); ?></h1>
