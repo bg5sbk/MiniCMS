@@ -9,10 +9,12 @@ select { border:solid 1px #e0e0e0; padding:2px; border-radius:3px 3px 3px 3px; b
 .clear { clear:both; height:0; padding:0; margin:0; font-size:0; border:none; }
 
 #menu { width:900px; margin:20px auto; border-radius:0 0 3px 3px; }
-#menu_title { margin:0; font-size:24px; color:#333; float:left; padding:0 30px; padding-top:4px; font-weight:normal; text-shadow: 0 1px 0 #FFFFFF;}
+#menu_title { margin:0; font-size:24px; float:left; padding:0 30px; padding-top:4px; font-weight:normal; }
+#menu_title a { color:#333; text-shadow: 0 1px 0 #FFFFFF;}
 #menu ul, #menu li { list-style:none; margin:0; padding:0; }
+#menu ul { float:right; }
 #menu li { float:left; }
-#menu a { font-size:16px; display:block; padding:10px 24px; }
+#menu ul a { font-size:16px; display:block; padding:10px 24px; }
 #menu .current a, #menu li a:hover { color:#cc0000; border-bottom:2px solid #cc0000; }
 
 #submenu { border-bottom:solid 1px #e0e0e0; }
