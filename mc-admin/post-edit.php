@@ -138,7 +138,7 @@ onfocus="if (this.temp_value != undefined && this.value != this.temp_value) retu
 <?php } ?>/>
 </div>
 <div style="margin-bottom:20px;">
-<textarea name="content" style="height:400px;width:99%;border:solid 1px #ccc;padding:3px 4px; border-radius:3px; resize:vertical;"><?php echo htmlspecialchars($post_content); ?></textarea>
+<textarea name="content" style="height:400px;width:99%;font-size:13px;border:solid 1px #ccc;padding:3px 4px; border-radius:3px; resize:vertical;"><?php echo htmlspecialchars($post_content); ?></textarea>
 </div>
 <div style="margin-bottom:20px;">
 <input name="tags" type="text"
