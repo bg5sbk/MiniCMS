@@ -18,6 +18,22 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   $page_date    = date("Y-m-d");
   $page_time    = date("H:i:s");
   
+  $page_path_part  = explode('/', $page_path);
+  $page_path_count = count($page_path_part);
+  
+  for ($i = 0; $i < $page_path_count; $i ++) {
+    $trim = trim($page_path_part[$i]);
+    if ($trim == '') {
+      unset($page_path_part[$i]);
+    } else {
+      $page_path_part[$i] = $trim;
+    }
+  }
+  
+  reset($page_path_part);
+  
+  $page_path = implode('/', $page_path_part);
+  
   if ($page_title == '') {
     $error_msg = '页面标题不能为空';
   }
@@ -80,6 +96,8 @@ if (isset($_POST['_IS_POST_BACK_'])) {
     $data['content'] = $page_content;
     
     file_put_contents($file_path, serialize($data));
+    
+    $succeed = true;
   }
 } else if (isset($_GET['file'])) {
   $file_path = '../mc-files/pages/data/'.$_GET['file'].'.dat';
@@ -113,7 +131,11 @@ function empty_textbox_blur(target) {
 <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
   <input type="hidden" name="_IS_POST_BACK_" value=""/>
   <?php if ($succeed) { ?>
-  <div class="updated">页面已保存！ <a href="#">查看</a></div>
+  <?php if ($page_state == 'publish') { ?>
+  <div class="updated">页面已发布。 <a href="/?<?php echo $page_path; ?>/" target="_blank">查看页面</a></div>
+  <?php } else { ?>
+  <div class="updated">页面已保存到“草稿箱”。 <a href="page.php?state=draft">打开草稿箱</a></div>
+  <?php } ?>
   <?php } ?>
   <div class="admin_page_name">
   <?php if ($page_path == '') echo "创建页面"; else echo "编辑页面"; ?>

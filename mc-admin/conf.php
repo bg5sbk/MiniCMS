@@ -3,6 +3,8 @@
 $display_info = false;
   
 if (isset($_POST['save'])) {
+  $user_name_changed = $_POST['user_name'] != $mc_config['user_name'];
+  
   $mc_config['site_name'] = $_POST['site_name'];
   $mc_config['site_desc'] = $_POST['site_desc'];
   $mc_config['site_link'] = $_POST['site_link'];
@@ -15,6 +17,10 @@ if (isset($_POST['save'])) {
   $code = "<?php\n\$mc_config = ".var_export($mc_config, true)."\n?>";
   
   file_put_contents('../mc-files/mc-conf.php', $code);
+  
+  if ($_POST['user_pass'] != '' || $user_name_changed) {
+    setcookie('mc_token', md5($mc_config['user_name'].'_'.$mc_config['user_pass']));
+  }
   
   $display_info = true;
 }

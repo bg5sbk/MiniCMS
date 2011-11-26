@@ -18,6 +18,19 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   $post_date    = date("Y-m-d");
   $post_time    = date("H:i:s");
   
+  $post_tags_count = count($post_tags);
+  
+  for ($i = 0; $i < $post_tags_count; $i ++) {
+    $trim = trim($post_tags[$i]);
+    if ($trim == '') {
+      unset($post_tags[$i]);
+    } else {
+      $post_tags[$i] = $trim;
+    }
+  }
+  
+  reset($post_tags);
+  
   if ($post_title == '') {
     $error_msg = '文章标题不能为空';
   }
@@ -76,6 +89,8 @@ if (isset($_POST['_IS_POST_BACK_'])) {
     $data['content'] = $post_content;
     
     file_put_contents($file_path, serialize($data));
+    
+    $succeed = true;
   }
 } else if (isset($_GET['id'])) {
   $file_path = '../mc-files/posts/data/'.$_GET['id'].'.dat';
@@ -109,7 +124,11 @@ function empty_textbox_blur(target) {
 <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
   <input type="hidden" name="_IS_POST_BACK_" value=""/>
   <?php if ($succeed) { ?>
-  <div class="updated">文章已保存！ <a href="#">查看</a></div>
+  <?php if ($post_state == 'publish') { ?>
+  <div class="updated">文章已发布。 <a href="/?post/<?php echo $post_id; ?>" target="_blank">查看文章</a></div>
+  <?php } else { ?>
+  <div class="updated">文章已保存到“草稿箱”。 <a href="post.php?state=draft">打开草稿箱</a></div>
+  <?php } ?>
   <?php } ?>
   <div class="admin_page_name">
   <?php if ($post_id == '') echo "撰写文章"; else echo "编辑文章"; ?>
