@@ -6,7 +6,7 @@
 <title><?php mc_site_name(); ?> - <?php mc_site_desc(); ?></title>
 <link href="<?php mc_theme_url('style.css'); ?>" type="text/css" rel="stylesheet"/>
 <link href="<?php mc_theme_url('prettify/prettify.css'); ?>" type="text/css" rel="stylesheet"/>
-<script type="text/javascript" href="<?php mc_theme_url('prettify/prettify.js'); ?>"></script>
+<script type="text/javascript" src="<?php mc_theme_url('prettify/prettify.js'); ?>"></script>
 </head>
 <body onload="prettyPrint()">
   <div id="header">
@@ -14,6 +14,8 @@
     <div id="navbar">
       <ul>
         <li><a href="/">首页</a></li>
+        <li><a href="/?tag/<?php echo urlencode("分享");?>/">分享</a></li>
+        <li><a href="/?tag/<?php echo urlencode("吹牛");?>/">吹牛</a></li>
         <li><a href="/?projects/">项目</a></li>
         <li><a href="/?about/">关于</a></li>
       </ul>
@@ -37,6 +39,6 @@
 <?php   } ?>
 <?php } ?>
   </div>
-  <div id="footer">本站由 <a href="http://1234n.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
+  <div id="footer">本站由 <a href="http://20bit.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
 </body>
 </html>
