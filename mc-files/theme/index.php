@@ -47,8 +47,8 @@
     </div>
     </div>
 <?php   } ?>
-<?php } ?>
   </div>
+<?php } ?>
   <div id="footer">本站由 <a href="http://20bit.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
 </body>
 </html>
