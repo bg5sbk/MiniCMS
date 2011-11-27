@@ -40,14 +40,11 @@
 <?php   while (mc_next_post()) { ?>
     <div class="post_list_item">
       <div class="date"><?php mc_the_date(); ?></div>
-      <div class="link"><?php mc_the_link(); ?>
-        <div class="tags"><?php mc_the_tags('','',''); ?></div>
-      </div>
+      <div class="link"><?php mc_the_link(); ?><div class="tags"><?php mc_the_tags('','',''); ?></div></div>
       <div class="clearer"></div>
     </div>
-    </div>
 <?php   } ?>
-  </div>
+    </div>
 <?php } ?>
   <div id="footer">本站由 <a href="http://20bit.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
 </body>
