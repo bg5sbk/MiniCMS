@@ -10,21 +10,19 @@ p { padding:0; margin:16px 0;}
 #navbar ul, #navbar li { float:left; list-style:none; }
 #navbar a { color:#44F; font-size:18px;  display:block; padding:10px 15px; }
 #navbar a:hover { color:#bc0000; }
-#page_info { font-size:16px; margin-bottom:20px; }
+#page_info { font-size:16px; margin-top:10px; color:#888; }
+#page_info span { padding:4px; background:#bc0000; color:#fff; border-radius:3px; }
 #content { width:888px; margin:0 auto; }
-
-#content .post_list { padding:10px 0; }
-#content .post_list_item { padding:10px 0; }
-#content .post_list_item .date { font-size:20px; color:#aaa; padding-right:20px; text-shadow: 0 1px 0 #ffffff; float:left; }
-#content .post_list_item .link { font-size:20px; float:left; }
-#content .post_list_item .tags a { font-size:11px; color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px 3px 3px 3px; }
-#content .post_list_item .tags a:hover { background:#bc0000; }
 
 #content .post h1 { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; margin:0; padding:20px 0 10px 0; }
 #content .post .tags { padding-bottom:20px; color:#888; font-size:11px; }
-#content .post .tags a { color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px 3px 3px 3px; }
+#content .post .tags a { color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px; }
 #content .post .tags a:hover { background:#bc0000; }
 #content .post .content { margin-bottom:1.625em; }
+
+#content .post_list { padding:10px 0; }
+#content .post_list .post { padding-bottom:10px; }
+#content .post_list .tags { padding-bottom:0; }
 
 #footer { text-align:center; margin-top:40px; color:#888; }
 pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#fff; color:#000; font-family: monospace; border:solid 1px #afafaf; }

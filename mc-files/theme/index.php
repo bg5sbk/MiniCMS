@@ -34,13 +34,13 @@
     <div class="post_content"><?php mc_the_content(); ?></div>
 <?php } else { ?>
 <?php   if (mc_is_tag()) { ?>
-    <div id="page_info">标签：<?php mc_tag_name(); ?></div>
+    <div id="page_info"><span><?php mc_tag_name(); ?></span>&nbsp;：</div>
 <?php   } ?>
     <div class="post_list">
 <?php   while (mc_next_post()) { ?>
-    <div class="post_list_item">
-      <div class="date"><?php mc_the_date(); ?></div>
-      <div class="link"><?php mc_the_link(); ?><div class="tags"><?php mc_the_tags('','',''); ?></div></div>
+    <div class="post">
+      <h1><?php mc_the_link(); ?></h1>
+      <div class="tags"><?php mc_the_tags('','',''); ?> by <?php mc_nick_name(); ?> at <?php mc_the_date(); ?>&nbsp;<?php mc_the_time(); ?></div>
       <div class="clearer"></div>
     </div>
 <?php   } ?>
