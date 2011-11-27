@@ -28,7 +28,7 @@ function mc_site_desc($print = true) {
 function mc_nick_name($print = true) {
   global $mc_config;
 
-  $nick_name = $mc_config['nick_name'];
+  $nick_name = $mc_config['user_nick'];
 
   if ($print) {
     echo $nick_name;

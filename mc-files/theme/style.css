@@ -3,7 +3,8 @@ a { color:#44f; text-decoration:none; }
 a:hover { color:#bc0000; }
 p { padding:0; margin:16px 0;}
 .clearer { clear:both; }
-#sitename { float:left; font-size:28px; margin-top:14px; color:#333; text-shadow: 0 1px 0 #fff}
+
+#sitename { float:left; font-size:28px; margin-top:14px; color:#333; text-shadow: 0 1px 0 #fff; }
 #header { height:64px; }
 #navbar { float:right; }
 #navbar ul, #navbar li { float:left; list-style:none; }
@@ -11,14 +12,20 @@ p { padding:0; margin:16px 0;}
 #navbar a:hover { color:#bc0000; }
 #page_info { font-size:16px; margin-bottom:20px; }
 #content { width:888px; margin:0 auto; }
-#content h1 { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; }
-#content .post_link { font-size:20px; padding:10px 0; }
-#content .date { color:#aaa; padding-right:20px; text-shadow: 0 1px 0 #ffffff; }
-#content .info { color:#aaa; }
-#content .post_content { margin-bottom:1.625em; }
-#content .post_tags { margin-left:140px; }
-#content .post_tags a { font-size:11px; color:#fff; background:#aaa; padding:2px 4px; margin-right:6px; border-radius:3px 3px 3px 3px; }
-#content .post_tags a:hover { background:#bc0000; }
+
+#content .post_list { padding:10px 0; }
+#content .post_list_item { padding:10px 0; }
+#content .post_list_item .date { font-size:20px; color:#aaa; padding-right:20px; text-shadow: 0 1px 0 #ffffff; float:left; }
+#content .post_list_item .link { font-size:20px; float:left; }
+#content .post_list_item .tags a { font-size:11px; color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px 3px 3px 3px; }
+#content .post_list_item .tags a:hover { background:#bc0000; }
+
+#content .post h1 { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; margin:0; padding:20px 0 10px 0; }
+#content .post .tags { padding-bottom:20px; color:#888; font-size:11px; }
+#content .post .tags a { color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px 3px 3px 3px; }
+#content .post .tags a:hover { background:#bc0000; }
+#content .post .content { margin-bottom:1.625em; }
+
 #footer { text-align:center; margin-top:40px; color:#888; }
-pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#FBFCFF; color:#000; font-family: monospace; border:solid 1px #afafaf; }
+pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#fff; color:#000; font-family: monospace; border:solid 1px #afafaf; }
 pre * { font-family: monospace; }
