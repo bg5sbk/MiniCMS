@@ -108,7 +108,9 @@ if (isset($_POST['_IS_POST_BACK_'])) {
     require $index_file;
     
     $mc_pages[$page_path] = $data;
-    
+
+    ksort($mc_pages);   
+ 
     file_put_contents($index_file,
       "<?php\n\$mc_pages=".var_export($mc_pages, true)."\n?>"
     );
@@ -193,13 +195,13 @@ function empty_textbox_blur(target) {
 <?php $year = substr($page_date, 0, 4); for ($i = 1990; $i <= 2030; $i ++) { ?>
       <option value="<?php echo $i; ?>" <?php if ($year == $i) echo 'selected="selected";' ?>><?php echo $i; ?></option>
 <?php } ?>
-    </select>-
+    </select> -
     <select name="month">
       <option value=""></option>
 <?php $month = substr($page_date, 5, 2); for ($i = 1; $i <= 12; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($month == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
-    </select>-
+    </select> -
     <select name="day">
       <option value=""></option>
 <?php $day = substr($page_date, 8, 2); for ($i = 1; $i <= 31; $i ++) { $m = sprintf("%02d", $i); ?>
@@ -211,13 +213,13 @@ function empty_textbox_blur(target) {
 <?php $hourse = substr($page_time, 0, 2); for ($i = 0; $i <= 23; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($hourse == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
-    </select>:
+    </select> :
     <select name="minute">
       <option value=""></option>
 <?php $minute = substr($page_time, 3, 2); for ($i = 0; $i <= 59; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($minute == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
-    </select>:
+    </select> :
     <select name="second">
       <option value=""></option>
 <?php $second = substr($page_time, 6, 2); for ($i = 0; $i <= 59; $i ++) { $m = sprintf("%02d", $i); ?>

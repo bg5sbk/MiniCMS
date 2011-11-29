@@ -71,6 +71,8 @@ function revert_post($id) {
   require $index_file2;
   
   $mc_posts[$id] = $post;
+
+  uasort($mc_posts, "post_sort");
   
   file_put_contents($index_file2, "<?php\n\$mc_posts=".var_export($mc_posts, true)."\n?>");
 }

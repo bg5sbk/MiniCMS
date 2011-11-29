@@ -40,6 +40,16 @@ function shorturl($input) {
   }
   return $output;
 }
+
+function post_sort($a, $b) {
+  $a_date = $a['date'];
+  $b_date = $b['date'];
+
+  if ($a_date != $b_date)
+    return $a_date > $b_date ? -1 : 1;
+
+  return $a['time'] > $b['time'] ? -1 : 1;
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">

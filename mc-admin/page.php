@@ -71,6 +71,8 @@ function revert_page($id) {
   require $index_file2;
   
   $mc_pages[$id] = $page;
+
+  ksort($mc_pages);
   
   file_put_contents($index_file2, "<?php\n\$mc_pages=".var_export($mc_pages, true)."\n?>");
 }
@@ -226,7 +228,7 @@ function do_filter()
     </tr>
   </thead>
   <tbody>
-  <?php if ($page_ids != NULL) sort($page_ids); for ($i = 0; $i < $page_count; $i ++) { $page_id = $page_ids[$i]; $page = $mc_pages[$page_id]; ?>
+  <?php /*if ($page_ids != NULL) sort($page_ids);*/ for ($i = 0; $i < $page_count; $i ++) { $page_id = $page_ids[$i]; $page = $mc_pages[$page_id]; ?>
   <?php if (isset($_GET['date']) && $_GET['date'] != '' && $_GET['date'] != $page['date']) continue; ?>
     <tr<?php if ($i % 2 == 0) echo ' class="alt"'; ?>>
       <td><input type="checkbox" name="ids" value="<?php echo $page_id; ?>"/></td>
