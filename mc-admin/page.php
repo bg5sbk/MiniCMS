@@ -3,18 +3,24 @@ require_once '../mc-files/mc-conf.php';
 
 function load_pages() {
   global $state, $index_file, $mc_pages;
-  
-  if ($_GET['state'] == 'draft') {
-    $state = 'draft';
-    $index_file = dirname(dirname(__FILE__)).'/mc-files/pages/index/draft.php';
-  }
-  else if ($_GET['state'] == 'delete'){
-    $state = 'delete';
-    $index_file = dirname(dirname(__FILE__)).'/mc-files/pages/index/delete.php';
+
+  if (isset($_GET['state'])) {  
+    if ($_GET['state'] == 'draft') {
+      $state = 'draft';
+      $index_file = '../mc-files/pages/index/draft.php';
+    }
+    else if ($_GET['state'] == 'delete'){
+      $state = 'delete';
+      $index_file = '../mc-files/pages/index/delete.php';
+    }
+    else {
+      $state = 'publish';
+      $index_file = '../mc-files/pages/index/publish.php';
+    }
   }
   else {
     $state = 'publish';
-    $index_file = dirname(dirname(__FILE__)).'/mc-files/pages/index/publish.php';
+    $index_file = '../mc-files/pages/index/publish.php';
   }
 
   require $index_file;
@@ -32,7 +38,7 @@ function delete_page($id) {
   file_put_contents($index_file, "<?php\n\$mc_pages=".var_export($mc_pages, true)."\n?>");
   
   if ($state != 'delete') {
-    $index_file2 = dirname(dirname(__FILE__)).'/mc-files/pages/index/delete.php';
+    $index_file2 = '../mc-files/pages/index/delete.php';
     
     require $index_file2;
   
@@ -40,7 +46,7 @@ function delete_page($id) {
   
     file_put_contents($index_file2, "<?php\n\$mc_pages=".var_export($mc_pages, true)."\n?>");
   } else {
-    unlink(dirname(dirname(__FILE__)).'/mc-files/pages/data/'.$page['file'].'.dat');
+    unlink('../mc-files/pages/data/'.$page['file'].'.dat');
   }
 }
 
@@ -57,7 +63,7 @@ function revert_page($id) {
   
   file_put_contents($index_file, "<?php\n\$mc_pages=".var_export($mc_pages, true)."\n?>");
   
-  $index_file2 = dirname(dirname(__FILE__)).'/mc-files/pages/index/'.$prev_state.'.php';
+  $index_file2 = '../mc-files/pages/index/'.$prev_state.'.php';
     
   require $index_file2;
   
