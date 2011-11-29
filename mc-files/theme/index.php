@@ -14,10 +14,6 @@
     <div id="navbar">
       <ul>
         <li><a href="/">首页</a></li>
-        <li><a href="/?tag/<?php echo urlencode("分享");?>/">分享</a></li>
-        <li><a href="/?tag/<?php echo urlencode("吹牛");?>/">吹牛</a></li>
-        <li><a href="/?projects/">项目</a></li>
-        <li><a href="/?about/">关于</a></li>
       </ul>
     </div>
     <div class="clearer"></div>
