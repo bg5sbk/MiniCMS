@@ -128,6 +128,11 @@ for ($i = $page_count - 1; $i >= 0; $i --) {
 }
 
 $date_array = array_unique($date_array);
+
+if (isset($_GET['date']))
+  $filter_date = $_GET['date'];
+else
+  $filter_date = '';
 ?>
 <?php require 'head.php' ?>
 <script type="text/javascript">
@@ -206,7 +211,7 @@ function do_filter()
     <select style="width:130px" id="date">
       <option value="">显示所有日期</option>
       <?php foreach ($date_array as $date_name) { ?>
-      <option value="<?php echo $date_name; ?>"><?php echo $date_name; ?></option>
+      <option value="<?php echo $date_name; ?>" <?php if ($filter_date == $date_name) echo ' selected="selected"'; ?>><?php echo $date_name; ?></option>
       <?php } ?>
     </select>
     <input type="submit" value="筛选" onclick="do_filter();"/>

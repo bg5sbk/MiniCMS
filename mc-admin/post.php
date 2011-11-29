@@ -261,12 +261,12 @@ function do_filter()
       </td>
       <td>
 <?php 
-  $tags = $post['tags'] 
+  $tags = $post['tags']; 
   $tag_count = count($tags); 
   for ($j = 0; $j < $tag_count; $j ++) { 
     $tag = $tags[$j]; 
 ?>
-      <a href="?state=<?php echo $state; ?>&date=<?php echo $filter_date; ?>&tag=<?php echo $filter_tag; ?>"><?php echo htmlspecialchars($tag); ?></a>
+      <a href="?state=<?php echo $state; ?>&date=<?php echo $filter_date; ?>&tag=<?php echo htmlspecialchars($tag); ?>"><?php echo htmlspecialchars($tag); ?></a>
 <?php 
     if ($j < $tag_count - 1)
       echo ',&nbsp;'; 
