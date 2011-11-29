@@ -1,6 +1,9 @@
 <?php
 require_once '../mc-files/mc-conf.php';
 
+if (!is_dir('../mc-files/pages/data/'))
+  mkdir('../mc-files/pages/data/');
+
 function load_pages() {
   global $state, $index_file, $mc_pages;
 

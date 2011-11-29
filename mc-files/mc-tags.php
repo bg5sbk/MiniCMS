@@ -153,12 +153,14 @@ function mc_the_tags($item_begin='', $item_gap=', ', $item_end='') {
 function mc_the_content($print = true) {
   global $mc_data;
   
+  $html = Markdown($mc_data['content']);
+
   if ($print) {
-    echo $mc_data['content'];
+    echo $html;
     return;
   }
   
-  return $mc_data['content'];
+  return $html;
 }
 
 function mc_the_link() {

@@ -1,8 +1,9 @@
 <?php
 ini_set("display_errors", "On"); error_reporting(E_ALL);
 
-require_once dirname(__FILE__).'/mc-tags.php';
-require_once dirname(__FILE__).'/mc-conf.php';
+require_once 'mc-tags.php';
+require_once 'mc-conf.php';
+require_once 'markdown.php';
 
 function mc_404()
 {

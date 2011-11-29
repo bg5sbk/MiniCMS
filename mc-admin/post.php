@@ -1,6 +1,9 @@
 <?php
 require_once '../mc-files/mc-conf.php';
 
+if (!is_dir('../mc-files/posts/data/'))
+  mkdir('../mc-files/posts/data/');
+
 function load_posts() {
   global $state, $index_file, $mc_posts;
   
