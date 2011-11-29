@@ -131,6 +131,16 @@ for ($i = 0; $i < $post_count; $i ++) {
 
 $date_array = array_unique($date_array);
 $tags_array = array_unique($tags_array);
+
+if (isset($_GET['tag']))
+  $filter_tag = $_GET['tag'];
+else
+  $filter_tag = '';
+
+if (isset($_GET['date']))
+  $filter_date = $_GET['date'];
+else
+  $filter_date = '';
 ?>
 <?php require 'head.php' ?>
 <script type="text/javascript">
@@ -210,13 +220,13 @@ function do_filter()
     <select style="width:130px" id="date">
       <option value="">显示所有日期</option>
       <?php foreach ($date_array as $date_name) { ?>
-      <option value="<?php echo $date_name; ?>"><?php echo $date_name; ?></option>
+      <option value="<?php echo $date_name; ?>" <?php if ($filter_date == $date_name) echo ' selected="selected"'; ?>><?php echo $date_name; ?></option>
       <?php } ?>
     </select>
     <select style="width:130px" id="tag">
       <option value="">显示所有标签</option>
       <?php foreach ($tags_array as $tag_name) { ?>
-      <option value="<?php echo $tag_name; ?>"><?php echo $tag_name; ?></option>
+      <option value="<?php echo $tag_name; ?>" <?php if ($filter_tag == $tag_name) echo ' selected="selected"'; ?>><?php echo $tag_name; ?></option>
       <?php } ?>
     <select>
     <input type="submit" value="筛选" onclick="do_filter();"/>
@@ -232,8 +242,8 @@ function do_filter()
   </thead>
   <tbody>
   <?php for ($i = 0; $i < $post_count; $i ++) { $post_id = $post_ids[$i]; $post = $mc_posts[$post_id]; ?>
-  <?php if (isset($_GET['tag']) && $_GET['tag'] != '' && !in_array($_GET['tag'], $post['tags'])) continue; ?>
-  <?php if (isset($_GET['date']) && $_GET['date'] != '' && $_GET['date'] != $post['date']) continue; ?>
+  <?php if ($filter_tag != '' && !in_array($filter_tag, $post['tags'])) continue; ?>
+  <?php if ($filter_date != '' && $filter_date != $post['date']) continue; ?>
     <tr<?php if ($i % 2 == 0) echo ' class="alt"'; ?>>
       <td><input type="checkbox" name="ids" value="<?php echo $post_id; ?>"/></td>
       <td>
@@ -249,7 +259,20 @@ function do_filter()
           <a href="#">查看</a>
         </div>
       </td>
-      <td><?php echo htmlspecialchars(implode(',',$post['tags']));?></td>
+      <td>
+<?php 
+  $tags = $post['tags'] 
+  $tag_count = count($tags); 
+  for ($j = 0; $j < $tag_count; $j ++) { 
+    $tag = $tags[$j]; 
+?>
+      <a href="?state=<?php echo $state; ?>&date=<?php echo $filter_date; ?>&tag=<?php echo $filter_tag; ?>"><?php echo htmlspecialchars($tag); ?></a>
+<?php 
+    if ($j < $tag_count - 1)
+      echo ',&nbsp;'; 
+  }
+?>
+      </td>
       <td><?php echo htmlspecialchars($post['date']);?><br/>已发布</td>
     </tr>
   <?php } ?>
