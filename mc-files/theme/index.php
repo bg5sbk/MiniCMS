@@ -3,7 +3,7 @@
 <html dir="ltr" lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<title><?php if (mc_is_post()) { mc_the_title(); ?> | <?php mc_site_name(); } else { mc_site_name(); ?> | <?php mc_site_desc(); }?></title>
+<title><?php if (mc_is_post() || mc_is_page()) { mc_the_title(); ?> | <?php mc_site_name(); } else { mc_site_name(); ?> | <?php mc_site_desc(); }?></title>
 <link href="<?php mc_theme_url('style.css'); ?>" type="text/css" rel="stylesheet"/>
 <link href="<?php mc_theme_url('prettify/prettify.css'); ?>" type="text/css" rel="stylesheet"/>
 <script type="text/javascript" src="<?php mc_theme_url('prettify/prettify.js'); ?>"></script>
