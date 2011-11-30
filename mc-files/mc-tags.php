@@ -92,16 +92,50 @@ function mc_tag_name($print=true) {
   return $mc_get_name;
 }
 
+function mc_has_new() {
+  global $mc_page_num;
+
+  return $mc_page_num != 1;
+}
+
+function mc_has_old() {
+  global $mc_page_num, $mc_post_count, $mc_post_per_page;
+
+  return $mc_page_num < ($mc_post_count / $mc_post_per_page);
+}
+
+function mc_goto_old($text) {
+  global $mc_get_type, $mc_get_name, $mc_page_num;
+
+  if ($mc_get_type == 'tag')
+    echo  '<a href="/?tag/'.$mc_get_name.'/?page='.($mc_page_num + 1).'">'.$text.'</a>';
+  else
+    echo '<a href="/?page='.($mc_page_num + 1).'">'.$text.'</a>';
+}
+
+function mc_goto_new($text) {
+  global $mc_get_type, $mc_get_name, $mc_page_num;
+
+  if ($mc_get_type == 'tag')
+    echo  '<a href="/?tag/'.$mc_get_name.'/?page='.($mc_page_num - 1).'">'.$text.'</a>';
+  else
+    echo '<a href="/?page='.($mc_page_num - 1).'">'.$text.'</a>';
+}
+
 function mc_next_post() {
-  global $mc_posts, $mc_post_ids, $mc_post_count, $mc_post_i, $mc_post_id, $mc_post;
+  global $mc_posts, $mc_post_ids, $mc_post_count, $mc_post_i, $mc_post_i_end, $mc_post_id, $mc_post, $mc_page_num, $mc_post_per_page;
 
   if (!isset($mc_posts))
     return false;
 
-  if (!isset($mc_post_i))
-    $mc_post_i = 0;
+  if (!isset($mc_post_i)) {
+    $mc_post_i = 0 + ($mc_page_num - 1) * $mc_post_per_page;
+    $mc_post_i_end = $mc_post_i + $mc_post_per_page;
+    if ($mc_post_count < $mc_post_i_end)
+      $mc_post_i_end = $mc_post_count;
+  }
 
-  if ($mc_post_i == $mc_post_count)
+  if ($mc_post_i == $mc_post_i_end)
     return false;
 
   $mc_post_id = $mc_post_ids[$mc_post_i];

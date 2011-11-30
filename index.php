@@ -1,15 +1,18 @@
 <?php
 require_once dirname(__FILE__).'/mc-files/mc-core.php';
 
+$mc_post_per_page = 10;
+
 $qs = $_SERVER['QUERY_STRING'];
 
 if (preg_match('|^post/([a-z0-5]{6})$|', $qs, $matches)) {
   $mc_get_type = 'post';
   $mc_get_name = $matches[1];
 }
-else if (preg_match('|^tag/([^/]+)/$|', $qs, $matches)) {
+else if (preg_match('|^tag/([^/]+)/(\?page=([0-9]+)){0,1}$|', $qs, $matches)) {
   $mc_get_type = 'tag';
   $mc_get_name = urldecode($matches[1]);
+  $mc_page_num = isset($matches[2]) ? $matches[3] : 1;
 }
 else if (preg_match('|^(([-a-zA-Z0-5]+/)+)$|', $qs, $matches)) {
   $mc_get_type = 'page';
@@ -18,8 +21,8 @@ else if (preg_match('|^(([-a-zA-Z0-5]+/)+)$|', $qs, $matches)) {
 else {
   $mc_get_type = 'index';
   $mc_get_name = '';
+  $mc_page_num = isset($_GET['page']) ? $_GET['page'] : 1;
 }
-
 
 
 if ($mc_get_type == 'post') {
@@ -75,8 +78,6 @@ else {
   $mc_post_ids = array_keys($mc_posts);
   $mc_post_count = count($mc_post_ids);
 }
-
-
 
 require 'mc-files/theme/index.php';
 ?>

@@ -47,6 +47,14 @@
     </div>
 <?php   } ?>
     </div>
+    <div class="pager">
+<?php   if (mc_has_new()) { ?>
+    <span class="prev" style="float:left;"><?php mc_goto_new('&larr;较新文章'); ?></span>
+<?php   } ?>
+<?php   if (mc_has_old()) { ?>
+    <span class="next" style="float:right;"><?php mc_goto_old('早期文章&rarr;'); ?></span>
+<?php   } ?>
+    </div>
 <?php } ?>
   </div>
   <div id="footer">本站由 <a href="http://20bit.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
