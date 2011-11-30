@@ -25,6 +25,19 @@ function mc_site_desc($print = true) {
   return $site_desc;
 }
 
+function mc_site_link($print = true) {
+  global $mc_config;
+
+  $site_link = $mc_config['site_link'];
+
+  if ($print) {
+    echo $site_link;
+    return;
+  }
+
+  return $site_link;
+}
+
 function mc_nick_name($print = true) {
   global $mc_config;
 

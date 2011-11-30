@@ -199,11 +199,11 @@ function do_filter()
 <?php if (isset($message)) { ?>
 <div class="updated"><?php echo $message; ?></div>
 <?php } ?>
-<div class="admin_page_name">管理文章<a href="post-edit.php">撰写文章</a></div>
+<div class="admin_page_name">管理文章<a class="link_button" href="post-edit.php">撰写文章</a></div>
 <div class="post_mode_link">
-<?php if ($state == 'publish') { ?><b><?php } else { ?><a href="?state=publish"><?php } ?>已发布<?php if ($state == 'publish') { ?></b><?php } else { ?></a><?php } ?>&nbsp;|&nbsp;
-<?php if ($state == 'draft') { ?><b><?php } else { ?><a href="?state=draft"><?php } ?>草稿箱<?php if ($state == 'draft') { ?></b><?php } else { ?></a><?php } ?>&nbsp;|&nbsp;
-<?php if ($state == 'delete') { ?><b><?php } else { ?><a href="?state=delete"><?php } ?>回收站<?php if ($state == 'delete') { ?></b><?php } else { ?></a><?php } ?>
+<a href="?state=publish" class="link_button <?php if ($state == 'publish') echo 'current'; ?>">已发布</a>
+<a href="?state=draft" class="link_button <?php if ($state == 'draft') echo 'current'; ?>">草稿箱</a>
+<a href="?state=delete" class="link_button <?php if ($state == 'delete') echo 'current'; ?>">回收站</a>
 </div>
 <div class="table_list_tool">
   <span>
@@ -249,33 +249,29 @@ function do_filter()
     <tr<?php if ($i % 2 == 0) echo ' class="alt"'; ?>>
       <td><input type="checkbox" name="ids" value="<?php echo $post_id; ?>"/></td>
       <td>
-        <a href="post-edit.php?id=<?php echo $post_id; ?>"><?php echo htmlspecialchars($post['title']);?></a>
-        <div>
-          <a href="post-edit.php?id=<?php echo $post_id; ?>">编辑</a>&nbsp;|&nbsp;
+        <a class="row_name" href="post-edit.php?id=<?php echo $post_id; ?>"><?php echo htmlspecialchars($post['title']);?></a>
+        <div class="row_tool">
+          <a class="link_button" href="post-edit.php?id=<?php echo $post_id; ?>">编辑</a>
           <?php if ($state == 'delete') { ?>
-          <a href="?revert=<?php echo $post_id; ?>&state=<?php echo $state; ?>">还原</a>&nbsp;|&nbsp;
-          <a href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>">删除</a>&nbsp;|&nbsp;
+          <a class="link_button" href="?revert=<?php echo $post_id; ?>&state=<?php echo $state; ?>">还原</a>
+          <a class="link_button" href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>">删除</a>
           <?php } else { ?>
-          <a href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>">回收</a>&nbsp;|&nbsp;
+          <a class="link_button" href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>">回收</a>
           <?php } ?>
-          <a href="#">查看</a>
+          <a class="link_button" href="/?post/<?php echo $post_id; ?>" target="_blank">查看</a>
         </div>
       </td>
-      <td>
-<?php 
+      <td><?php 
   $tags = $post['tags']; 
   $tag_count = count($tags); 
   for ($j = 0; $j < $tag_count; $j ++) { 
     $tag = $tags[$j]; 
-?>
-      <a href="?state=<?php echo $state; ?>&date=<?php echo $filter_date; ?>&tag=<?php echo htmlspecialchars($tag); ?>"><?php echo htmlspecialchars($tag); ?></a>
-<?php 
+?><a href="?state=<?php echo $state; ?>&date=<?php echo $filter_date; ?>&tag=<?php echo htmlspecialchars($tag); ?>"><?php echo htmlspecialchars($tag); ?></a><?php 
     if ($j < $tag_count - 1)
       echo ',&nbsp;'; 
   }
-?>
-      </td>
-      <td><?php echo htmlspecialchars($post['date']);?><br/>已发布</td>
+   ?></td>
+      <td><?php echo htmlspecialchars($post['date']);?></td>
     </tr>
   <?php } ?>
   </tbody>

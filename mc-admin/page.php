@@ -190,11 +190,11 @@ function do_filter()
 <?php if (isset($message)) { ?>
 <div class="updated"><?php echo $message; ?></div>
 <?php } ?>
-<div class="admin_page_name">管理页面<a href="page-edit.php">创建页面</a></div>
+<div class="admin_page_name">管理页面<a class="link_button" href="page-edit.php">创建页面</a></div>
 <div class="post_mode_link">
-<?php if ($state == 'publish') { ?><b><?php } else { ?><a href="?state=publish"><?php } ?>已发布<?php if ($state == 'publish') { ?></b><?php } else { ?></a><?php } ?>&nbsp;|&nbsp;
-<?php if ($state == 'draft') { ?><b><?php } else { ?><a href="?state=draft"><?php } ?>草稿箱<?php if ($state == 'draft') { ?></b><?php } else { ?></a><?php } ?>&nbsp;|&nbsp;
-<?php if ($state == 'delete') { ?><b><?php } else { ?><a href="?state=delete"><?php } ?>回收站<?php if ($state == 'delete') { ?></b><?php } else { ?></a><?php } ?>
+<a href="?state=publish" class="link_button <?php if ($state == 'publish') echo 'current'; ?>">已发布</a>
+<a href="?state=draft" class="link_button <?php if ($state == 'draft') echo 'current'; ?>">草稿箱</a>
+<a href="?state=delete" class="link_button <?php if ($state == 'delete') echo 'current'; ?>">回收站</a>
 </div>
 <div class="table_list_tool">
   <span>
@@ -233,16 +233,16 @@ function do_filter()
     <tr<?php if ($i % 2 == 0) echo ' class="alt"'; ?>>
       <td><input type="checkbox" name="ids" value="<?php echo $page_id; ?>"/></td>
       <td>
-        <a href="page-edit.php?file=<?php echo $page['file']; ?>"><?php echo htmlspecialchars($page['title']);?></a>
-        <div>
-          <a href="page-edit.php?file=<?php echo $page['file']; ?>">编辑</a>&nbsp;|&nbsp;
+        <a class="row_name" href="page-edit.php?file=<?php echo $page['file']; ?>"><?php echo htmlspecialchars($page['title']);?></a>
+        <div class="row_tool">
+          <a class="link_button" href="page-edit.php?file=<?php echo $page['file']; ?>">编辑</a>
           <?php if ($state == 'delete') { ?>
-          <a href="?revert=<?php echo $page_id; ?>&state=<?php echo $state; ?>">还原</a>&nbsp;|&nbsp;
-          <a href="?delete=<?php echo $page_id; ?>&state=<?php echo $state; ?>">删除</a>&nbsp;|&nbsp;
+          <a class="link_button" href="?revert=<?php echo $page_id; ?>&state=<?php echo $state; ?>">还原</a>
+          <a class="link_button" href="?delete=<?php echo $page_id; ?>&state=<?php echo $state; ?>">删除</a>
           <?php } else { ?>
-          <a href="?delete=<?php echo $page_id; ?>&state=<?php echo $state; ?>">回收</a>&nbsp;|&nbsp;
+          <a class="link_button" href="?delete=<?php echo $page_id; ?>&state=<?php echo $state; ?>">回收</a>
           <?php } ?>
-          <a href="#">查看</a>
+          <a class="link_button" href="/?<?php echo $page_id; ?>/" target="_blank">查看</a>
         </div>
       </td>
       <td><?php
@@ -252,7 +252,7 @@ function do_filter()
           echo '－';
         }
         echo $paths[$paths_count - 1]; ?></td>
-      <td><?php echo htmlspecialchars($page['date']);?><br/>已发布</td>
+      <td><?php echo htmlspecialchars($page['date']);?></td>
     </tr>
   <?php } ?>
   </tbody>

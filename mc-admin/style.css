@@ -28,12 +28,17 @@ select { border:solid 1px #e0e0e0; padding:2px; border-radius:3px 3px 3px 3px; b
 #footer { color:#888; margin-top:20px; padding:12px 0; width:900px; margin:0 auto; font-size:12px; border-top:solid 1px #e0e0e0; }
 #footer span { float:right; }
 
-.table_list table { border:0; width:100%; border:solid 1px #e0e0e0; border-top:0; color:#333; border-radius:3px 3px 3px 3px; }
+.link_button { background:#f0f0f0; padding:2px 4px; font-size:12px; margin-right:4px; border-radius:3px 3px 3px 3px; }
+.link_button:hover, .link_button.current { background:#bc0000; color:#fff; }
+
+.table_list table { border:0; width:100%; border:solid 1px #e0e0e0; border-top:0; color:#333; border-radius:3px 3px 3px 3px; font-size:12px; }
 .table_list td { padding:8px; border-top:solid 1px #e0e0e0; vertical-align:top; }
 .table_list thead td, .table_list tfoot td { background:#f0f0f0; }
 .table_list tbody tr div { visibility:hidden; border:none; padding:0; margin:0; }
 .table_list tbody tr:hover div { visibility:visible; }
 .table_list .alt { background:#fafafa; }
+.table_list .row_name { font-size:14px; }
+.table_list .row_tool { margin-top:8px; }
 
 .table_list_tool span { margin-right:20px; }
 .table_list_tool { color:#333; }
@@ -46,7 +51,7 @@ div.updated, .message { background-color: #FFFFE0; border-color: #E6DB55; paddin
 div.updated, div.error { border-radius:3px; border-style:solid; border-width:1px; }
 
 .admin_page_name { font-size:24px; padding-bottom:16px; color:#333; }
-.admin_page_name a { background:#f0f0f0;padding:4px; font-size:12px; margin-left:10px; border-radius:3px 3px 3px 3px; }
+.admin_page_name a { margin-left:10px; }
 
 .small_form .name { font-size:16px; font-weight:bold; color:#333; }
 .small_form .label { color:#333; padding-bottom:4px; }

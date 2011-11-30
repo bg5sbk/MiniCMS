@@ -1,10 +1,13 @@
-body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; line-height:20px; }
+body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; }
 a { color:#44f; text-decoration:none; }
 a:hover { color:#bc0000; }
-p { padding:0; margin:16px 0;}
+p { padding:0; margin:16px 0; line-height:20px; }
 .clearer { clear:both; }
 
+#main { width:888px; margin:0 auto; }
 #sitename { float:left; font-size:28px; margin-top:14px; color:#333; text-shadow: 0 1px 0 #fff; }
+#sitename a { color:#3f3f3f; }
+#sitename a:hover { color:#44f; }
 #header { height:64px; }
 #navbar { float:right; }
 #navbar ul, #navbar li { float:left; list-style:none; }
@@ -12,9 +15,10 @@ p { padding:0; margin:16px 0;}
 #navbar a:hover { color:#bc0000; }
 #page_info { font-size:16px; margin-top:10px; color:#888; }
 #page_info span { padding:4px; background:#bc0000; color:#fff; border-radius:3px; }
-#content { width:888px; margin:0 auto; }
 
-#content .post h1 { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; margin:0; padding:20px 0 10px 0; }
+#content .post .title { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; margin:0; padding:20px 0 10px 0; }
+#content .post .title a { color:#3f3f3f; }
+#content .post .title a:hover { color:#44f; }
 #content .post .tags { padding-bottom:20px; color:#888; font-size:11px; }
 #content .post .tags a { color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px; }
 #content .post .tags a:hover { background:#bc0000; }
