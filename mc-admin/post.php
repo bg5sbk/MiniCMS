@@ -113,12 +113,11 @@ if (isset($_GET['revert']) || (isset($_GET['apply']) && $_GET['apply'] == 'rever
   exit();
 }
 
-$post_ids = array_keys($mc_posts);
-
 if (isset($_GET['done'])) {
   $message = '操作成功';
 }
 
+$post_ids = array_keys($mc_posts);
 $post_count = count($post_ids);
 
 $date_array = array();
@@ -127,7 +126,7 @@ $tags_array = array();
 for ($i = 0; $i < $post_count; $i ++) {
   $post_id = $post_ids[$i];
   $post = $mc_posts[$post_id];
-  $date_array[] = $post['date'];
+  $date_array[] = substr($post['date'], 0, 7);
   $tags_array = array_merge($tags_array, $post['tags']);
 }
 
@@ -143,6 +142,48 @@ if (isset($_GET['date']))
   $filter_date = $_GET['date'];
 else
   $filter_date = '';
+
+$mc_posts2 = array();
+
+for ($i = 0; $i < $post_count; $i ++) { 
+  $post_id = $post_ids[$i]; 
+  $post = $mc_posts[$post_id];
+
+  if ($filter_tag != '' && !in_array($filter_tag, $post['tags']))
+    continue;
+  
+  if ($filter_date != '' && strpos($post['date'], $filter_date) !== 0)
+    continue;
+
+  $mc_posts2[$post_id] = $post;
+}
+
+$mc_posts = $mc_posts2;
+
+$post_ids = array_keys($mc_posts);
+$post_count = count($post_ids);
+
+$last_page = ceil($post_count / 10);
+
+if (isset($_GET['page']))
+  $page_num = $_GET['page'];
+else
+  $page_num = 1;
+
+if ($page_num > 1)
+  $prev_page = $page_num - 1;
+else
+  $prev_page = 1;
+
+if ($page_num < $last_page)
+  $next_page = $page_num + 1;
+else
+  $next_page = $last_page;
+
+if ($page_num < 0)
+  $page_num = 1;
+else if ($page_num > $last_page)
+  $page_num = $last_page;
 ?>
 <?php require 'head.php' ?>
 <script type="text/javascript">
@@ -195,6 +236,15 @@ function do_filter()
   
   location.href = '?state=<?php echo $state; ?>&tag=' + tag.value + '&date=' + date.value;
 }
+function goto_page(e)
+{
+  var evt = e || window.event;
+  var eventSrc = evt.target||evt.srcElement;
+
+  if ((e.keyCode || e.which) == 13) {
+    location.href = '?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=' + eventSrc.value;
+  }
+}
 </script>
 <?php if (isset($message)) { ?>
 <div class="updated"><?php echo $message; ?></div>
@@ -207,7 +257,7 @@ function do_filter()
 </div>
 <div class="table_list_tool">
   <span>
-    <select style="width:100px" id="op1">
+    <select id="op1">
       <option value="">批量操作</option>
       <?php if ($state == 'delete') { ?>
       <option value="revert">还原</option>
@@ -219,13 +269,13 @@ function do_filter()
     <input type="button" value="应用" onclick="apply_all('op1','ids');"/>
   </span>
   <span>
-    <select style="width:130px" id="date">
+    <select id="date">
       <option value="">显示所有日期</option>
       <?php foreach ($date_array as $date_name) { ?>
       <option value="<?php echo $date_name; ?>" <?php if ($filter_date == $date_name) echo ' selected="selected"'; ?>><?php echo $date_name; ?></option>
       <?php } ?>
     </select>
-    <select style="width:130px" id="tag">
+    <select id="tag">
       <option value="">显示所有标签</option>
       <?php foreach ($tags_array as $tag_name) { ?>
       <option value="<?php echo $tag_name; ?>" <?php if ($filter_tag == $tag_name) echo ' selected="selected"'; ?>><?php echo $tag_name; ?></option>
@@ -233,6 +283,17 @@ function do_filter()
     <select>
     <input type="submit" value="筛选" onclick="do_filter();"/>
   </span>
+  <span class="pager">
+    共 <?php echo $post_count; ?> 项&nbsp;&nbsp;
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>">&laquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=<?php echo $prev_page; ?>">&lsaquo;</a>
+    第 <input type="text" value="<?php echo $page_num; ?>" id="page_input_1"/> 页,共 <?php echo $last_page; ?> 页
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=<?php echo $next_page; ?>">&rsaquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=<?php echo $last_page; ?>">&raquo;</a>
+  </span>
+  <script type="text/javascript">
+  document.getElementById('page_input_1').onkeydown = goto_page;
+  </script>
 </div>
 <div class="table_list post_list">
 <table colspan="0" rowspan="0" cellpadding="0" cellspacing="0" id="list">
@@ -243,9 +304,7 @@ function do_filter()
     </tr>
   </thead>
   <tbody>
-  <?php for ($i = 0; $i < $post_count; $i ++) { $post_id = $post_ids[$i]; $post = $mc_posts[$post_id]; ?>
-  <?php if ($filter_tag != '' && !in_array($filter_tag, $post['tags'])) continue; ?>
-  <?php if ($filter_date != '' && $filter_date != $post['date']) continue; ?>
+  <?php for ($i = 0; $i < $post_count; $i ++) { if ($i < ($page_num - 1) * 10 || $i >= ($page_num * 10)) continue; $post_id = $post_ids[$i]; $post = $mc_posts[$post_id]; ?>
     <tr<?php if ($i % 2 == 0) echo ' class="alt"'; ?>>
       <td><input type="checkbox" name="ids" value="<?php echo $post_id; ?>"/></td>
       <td>
@@ -253,10 +312,10 @@ function do_filter()
         <div class="row_tool">
           <a class="link_button" href="post-edit.php?id=<?php echo $post_id; ?>">编辑</a>
           <?php if ($state == 'delete') { ?>
-          <a class="link_button" href="?revert=<?php echo $post_id; ?>&state=<?php echo $state; ?>">还原</a>
-          <a class="link_button" href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>">删除</a>
+          <a class="link_button" href="?revert=<?php echo $post_id; ?>&state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>">还原</a>
+          <a class="link_button" href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>">删除</a>
           <?php } else { ?>
-          <a class="link_button" href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>">回收</a>
+          <a class="link_button" href="?delete=<?php echo $post_id; ?>&state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>">回收</a>
           <?php } ?>
           <a class="link_button" href="/?post/<?php echo $post_id; ?>" target="_blank">查看</a>
         </div>
@@ -284,11 +343,22 @@ function do_filter()
 </div>
 <div class="table_list_tool">
   <span>
-    <select style="width:100px" id="op2">
+    <select id="op2">
       <option>批量操作</option>
       <option value="delete">回收</option>
     </select>
     <input type="button" name="apply" value="应用" onclick="apply_all('op2','ids');"/>
   </span>
+  <span class="pager">
+    共 <?php echo $post_count; ?> 项&nbsp;&nbsp;
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>">&laquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=<?php echo $prev_page; ?>">&lsaquo;</a>
+    第 <input type="text" value="<?php echo $page_num; ?>" id="page_input_2"/> 页,共 <?php echo $last_page; ?> 页
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=<?php echo $next_page; ?>">&rsaquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=<?php echo $last_page; ?>">&raquo;</a>
+  </span>
+  <script type="text/javascript">
+  document.getElementById('page_input_2').onkeydown = goto_page;
+  </script>
 </div>
 <?php require 'foot.php' ?>
