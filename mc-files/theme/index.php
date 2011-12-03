@@ -47,13 +47,14 @@
     </div>
 <?php   } ?>
     </div>
-    <div class="pager">
+    <div id="page_bar">
 <?php   if (mc_has_new()) { ?>
     <span class="prev" style="float:left;"><?php mc_goto_new('&larr;较新文章'); ?></span>
 <?php   } ?>
 <?php   if (mc_has_old()) { ?>
     <span class="next" style="float:right;"><?php mc_goto_old('早期文章&rarr;'); ?></span>
 <?php   } ?>
+    <div class="clearer"></div>
     </div>
 <?php } ?>
   </div>
