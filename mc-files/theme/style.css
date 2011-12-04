@@ -1,32 +1,44 @@
-body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:888px; margin:20px auto; background:#f9f9f9; }
+body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:960px; margin:0 auto; background:#f9f9f9; }
 a { color:#44f; text-decoration:none; }
 a:hover { color:#bc0000; }
 p { padding:0; margin:16px 0; line-height:20px; }
 .clearer { clear:both; }
 
-#main { width:888px; margin:0 auto; }
-#sitename { float:left; font-size:28px; margin-top:14px; color:#333; text-shadow: 0 1px 0 #fff; }
+#main { width:960px; margin:0 auto; }
+#sitename { font-size:28px; color:#333; text-shadow: 0 1px 0 #fff; }
 #sitename a { color:#3f3f3f; }
 #sitename a:hover { color:#44f; }
-#header { height:64px; }
-#navbar { float:right; }
-#navbar ul, #navbar li { float:left; list-style:none; }
-#navbar a { color:#44F; font-size:18px;  display:block; padding:10px 15px; }
+#header { margin:40px 0 40px 0; }
+#side { float:left; width:150px; }
+#navbar {  }
+#navbar ul, #navbar li { list-style:none; margin:0; padding:0; }
+#navbar a { color:#44F; font-size:18px; display:block; padding-bottom:20px; }
 #navbar a:hover { color:#bc0000; }
-#page_info { font-size:16px; margin-top:10px; color:#888; }
+#page_info { font-size:16px; margin-bottom:20px; color:#888; }
 #page_info span { padding:4px; background:#bc0000; color:#fff; border-radius:3px; }
 
-#content .post .title { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; margin:0; padding:20px 0 10px 0; }
+#content { float:right; width:100%; margin-left:-160px; }
+#content_box { margin-left:160px; border-left:solid 1px #efefef; padding-left:20px; }
+#content .post .title { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; margin:0; padding:0 0 10px 0; }
 #content .post .title a { color:#3f3f3f; }
 #content .post .title a:hover { color:#44f; }
-#content .post .tags { padding-bottom:20px; color:#888; font-size:11px; }
+#content .post .tags { padding-bottom:10px; color:#888; font-size:11px; }
 #content .post .tags a { color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px; }
 #content .post .tags a:hover { background:#bc0000; }
 #content .post .content { margin-bottom:1.625em; }
 
-#content .post_list { padding:10px 0; }
-#content .post_list .post { padding-bottom:10px; }
+#content .post_list { }
+#content .post_list .post { padding-bottom:40px; }
 #content .post_list .tags { padding-bottom:0; }
+
+#content .tag_list ul, 
+#content .tag_list li,
+#content .date_list ul, 
+#content .date_list li { list-style:none; margin:0; padding:0; }
+
+#content .tag_list, #content .date_list { float:left; width:200px; }
+#content .tag_list li,
+#content .date_list li { margin-bottom:8px;}
 
 #page_bar { margin-top:20px; }
 

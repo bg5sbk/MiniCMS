@@ -81,7 +81,28 @@ function mc_is_tag() {
   return $mc_get_type == 'tag';
 }
 
+function mc_is_date() {
+  global $mc_get_type;
+  return $mc_get_type == 'date';
+}
+
+function mc_is_archive() {
+  global $mc_get_type;
+  return $mc_get_type == 'archive';
+}
+
 function mc_tag_name($print=true) {
+  global $mc_get_name;
+
+  if ($print) {
+    echo $mc_get_name;
+    return;
+  }
+
+  return $mc_get_name;
+}
+
+function mc_date_name($print=true) {
   global $mc_get_name;
 
   if ($print) {
@@ -120,6 +141,52 @@ function mc_goto_new($text) {
     echo  '<a href="/?tag/'.$mc_get_name.'/?page='.($mc_page_num - 1).'">'.$text.'</a>';
   else
     echo '<a href="/?page='.($mc_page_num - 1).'">'.$text.'</a>';
+}
+
+function mc_date_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
+  global $mc_dates;
+
+  if (isset($mc_dates)) {
+    $date_count = count($mc_dates);
+
+    for ($i = 0; $i < $date_count; $i ++) {
+      $date = $mc_dates[$i];
+
+      echo $item_begin;
+      echo '<a href="/?date/';
+      echo $date;
+      echo '/">';
+      echo $date;
+      echo '</a>';
+      echo $item_end;
+
+      if ($i < $date_count - 1)
+        echo $item_gap;
+    }
+  }
+}
+
+function mc_tag_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
+  global $mc_tags;
+
+  if (isset($mc_tags)) {
+    $tag_count = count($mc_tags);
+
+    for ($i = 0; $i < $tag_count; $i ++) {
+      $tag = $mc_tags[$i];
+
+      echo $item_begin;
+      echo '<a href="/?tag/';
+      echo urlencode($tag);
+      echo '/">';
+      echo $tag;
+      echo '</a>';
+      echo $item_end;
+
+      if ($i < $tag_count - 1)
+        echo $item_gap;
+    }
+  }
 }
 
 function mc_next_post() {

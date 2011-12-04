@@ -14,6 +14,14 @@ else if (preg_match('|^tag/([^/]+)/(\?page=([0-9]+)){0,1}$|', $qs, $matches)) {
   $mc_get_name = urldecode($matches[1]);
   $mc_page_num = isset($matches[2]) ? $matches[3] : 1;
 }
+else if (preg_match('|^date/([0-9]{4}-[0-9]{2})/(\?page=([0-9]+)){0,1}$|', $qs, $matches)) {
+  $mc_get_type = 'date';
+  $mc_get_name = urldecode($matches[1]);
+  $mc_page_num = isset($matches[2]) ? $matches[3] : 1;
+}
+else if (preg_match('|^archive/$|', $qs, $matches)) {
+  $mc_get_type = 'archive';
+}
 else if (preg_match('|^(([-a-zA-Z0-5]+/)+)$|', $qs, $matches)) {
   $mc_get_type = 'page';
   $mc_get_name = substr($matches[1], 0, -1);
@@ -23,7 +31,6 @@ else {
   $mc_get_name = '';
   $mc_page_num = isset($_GET['page']) ? $_GET['page'] : 1;
 }
-
 
 if ($mc_get_type == 'post') {
   require 'mc-files/posts/index/publish.php';
@@ -43,7 +50,7 @@ else if ($mc_get_type == 'tag') {
   
   $mc_post_ids = array_keys($mc_posts);
   $mc_post_count = count($mc_post_ids);
-  
+
   $mc_tag_posts = array();
   
   for ($i = 0; $i < $mc_post_count; $i ++) {
@@ -58,6 +65,46 @@ else if ($mc_get_type == 'tag') {
   
   $mc_post_ids = array_keys($mc_posts);
   $mc_post_count = count($mc_post_ids);
+}
+else if ($mc_get_type == 'date') {
+  require 'mc-files/posts/index/publish.php';
+
+  $mc_post_ids = array_keys($mc_posts);
+  $mc_post_count = count($mc_post_ids);
+
+  $mc_date_posts = array();
+
+  for ($i = 0; $i < $mc_post_count; $i ++) {
+    $id = $mc_post_ids[$i];
+    $post = $mc_posts[$id];
+    if (strpos($post['date'], $mc_get_name) === 0) {
+      $mc_date_posts[$id] = $post;
+    }
+  }
+
+  $mc_posts = $mc_date_posts;
+
+  $mc_post_ids = array_keys($mc_posts);
+  $mc_post_count = count($mc_post_ids);
+}
+else if ($mc_get_type == 'archive') {
+  require 'mc-files/posts/index/publish.php';
+
+  $mc_post_ids = array_keys($mc_posts);
+  $mc_post_count = count($mc_post_ids);
+
+  $tags_array = array();
+  $date_adddrray = array();
+
+  for ($i = 0; $i < $mc_post_count; $i ++) {
+    $post_id = $mc_post_ids[$i];
+    $post = $mc_posts[$post_id];
+    $date_array[] = substr($post['date'], 0, 7);
+    $tags_array = array_merge($tags_array, $post['tags']);
+  }
+
+  $mc_tags  = array_values(array_unique($tags_array));
+  $mc_dates = array_values(array_unique($date_array));
 }
 else if ($mc_get_type == 'page') {
   require 'mc-files/pages/index/publish.php';

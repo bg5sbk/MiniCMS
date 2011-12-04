@@ -12,16 +12,9 @@
   <div id="main">
   <div id="header">
     <div id="sitename"><a href="<?php mc_site_link(); ?>"><?php mc_site_name(); ?></a></div>
-    <div id="navbar">
-      <ul>
-        <li><a href="/">首页</a></li>
-        <li><a href="/?projects/">项目</a></li>
-        <li><a href="/?about/">关于</a></li>
-      </ul>
-    </div>
-    <div class="clearer"></div>
   </div>
   <div id="content">
+  <div id="content_box">
 <?php if (mc_is_post()) { ?>
     <div class="post">
       <h1 class="title"><?php mc_the_link(); ?></h1>
@@ -34,9 +27,23 @@
       <div class="tags">by <?php mc_nick_name(); ?> at <?php mc_the_date(); ?></div>
       <div class="content"><?php mc_the_content(); ?></div>
     </div>
+<?php } else if (mc_is_archive()) { ?>
+    <div class="date_list">
+    <ul>
+<?php mc_date_list(); ?>
+    </ul>
+    </div>
+    <div class="tag_list">
+    <ul>
+<?php mc_tag_list(); ?>
+    </ul>
+    </div>
+    <div class="clearer"></div>
 <?php } else { ?>
 <?php   if (mc_is_tag()) { ?>
     <div id="page_info"><span><?php mc_tag_name(); ?></span></div>
+<?php   } else if (mc_is_date()) { ?>
+    <div id="page_info"><span><?php mc_date_name(); ?></span></div>
 <?php   } ?>
     <div class="post_list">
 <?php   while (mc_next_post()) { ?>
@@ -46,18 +53,31 @@
       <div class="clearer"></div>
     </div>
 <?php   } ?>
-    </div>
     <div id="page_bar">
 <?php   if (mc_has_new()) { ?>
-    <span class="prev" style="float:left;"><?php mc_goto_new('&larr;较新文章'); ?></span>
+      <span class="prev" style="float:left;"><?php mc_goto_new('&larr;较新文章'); ?></span>
 <?php   } ?>
 <?php   if (mc_has_old()) { ?>
-    <span class="next" style="float:right;"><?php mc_goto_old('早期文章&rarr;'); ?></span>
+      <span class="next" style="float:right;"><?php mc_goto_old('早期文章&rarr;'); ?></span>
 <?php   } ?>
+      <div class="clearer"></div>
+    </div>
     <div class="clearer"></div>
     </div>
 <?php } ?>
   </div>
+  </div>
+  <div id="side">
+    <div id="navbar">
+      <ul>
+        <li><a href="/">首页</a></li>
+        <li><a href="/?projects/">项目</a></li>
+        <li><a href="/?about/">关于</a></li>
+        <li><a href="/?archive/">存档</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="clearer"></div>
   <div id="footer">本站由 <a href="http://20bit.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
   </div>
 </body>
