@@ -78,7 +78,7 @@
     </div>
   </div>
   <div class="clearer"></div>
-  <div id="footer">本站由 <a href="http://20bit.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
+  <div id="footer">本站由 <a href="http://1234n.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
   </div>
 </body>
 </html>
