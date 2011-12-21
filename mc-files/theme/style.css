@@ -3,6 +3,7 @@ a { color:#44f; text-decoration:none; }
 a:hover { color:#bc0000; }
 p { padding:0; margin:16px 0; line-height:20px; }
 .clearer { clear:both; }
+img { border:0; }
 
 #main { width:960px; margin:0 auto; }
 #sitename { font-size:28px; color:#333; text-shadow: 0 1px 0 #fff; }
@@ -10,7 +11,7 @@ p { padding:0; margin:16px 0; line-height:20px; }
 #sitename a:hover { color:#44f; }
 #header { margin:40px 0 40px 0; }
 #side { float:left; width:150px; }
-#navbar {  }
+#navbar { margin-top:30px; }
 #navbar ul, #navbar li { list-style:none; margin:0; padding:0; }
 #navbar a { color:#44F; font-size:18px; display:block; padding-bottom:20px; }
 #navbar a:hover { color:#bc0000; }
@@ -18,7 +19,7 @@ p { padding:0; margin:16px 0; line-height:20px; }
 #page_info span { padding:4px; background:#bc0000; color:#fff; border-radius:3px; }
 
 #content { float:right; width:100%; margin-left:-160px; }
-#content_box { margin-left:160px; border-left:solid 1px #efefef; padding-left:20px; }
+#content_box { margin-left:160px; border-left:solid 1px #ccc; padding-left:20px; }
 #content .post .title { font-weight:normal; font-size:24px; color:#333; text-shadow: 0 1px 0 #ffffff; margin:0; padding:0 0 10px 0; }
 #content .post .title a { color:#3f3f3f; }
 #content .post .title a:hover { color:#44f; }
@@ -26,6 +27,7 @@ p { padding:0; margin:16px 0; line-height:20px; }
 #content .post .tags a { color:#fff; background:#aaa; padding:2px 4px; margin-right:6px;  border-radius:3px; }
 #content .post .tags a:hover { background:#bc0000; }
 #content .post .content { margin-bottom:1.625em; }
+#content .post img { max-width:780px; }
 
 #content .post_list { }
 #content .post_list .post { padding-bottom:40px; }
@@ -45,3 +47,9 @@ p { padding:0; margin:16px 0; line-height:20px; }
 #footer { text-align:center; margin:30px 0; color:#888; }
 pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#fff; color:#000; font-family: monospace; border:solid 1px #afafaf; }
 pre * { font-family: monospace; }
+
+.page_nav { float:right; border-right:solid 1px #ccc; }
+.page_nav, .page_nav li { list-style:none; margin:0; padding:0; }
+.page_nav li { float:left; }
+.page_nav a { display:block; padding:6px 20px; }
+.page_nav a { border:solid 1px #ccc; border-right:0; }

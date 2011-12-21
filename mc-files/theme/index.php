@@ -23,17 +23,19 @@
     </div>
 <?php } else if (mc_is_page()) { ?>
     <div class="post">
-      <h1 class="title"><?php mc_the_link(); ?></h1>
-      <div class="tags">by <?php mc_nick_name(); ?> at <?php mc_the_date(); ?></div>
+      <?php /*<h1 class="title"><?php mc_the_link(); ?></h1>
+      <div class="tags">by <?php mc_nick_name(); ?> at <?php mc_the_date(); ?></div> */ ?>
       <div class="content"><?php mc_the_content(); ?></div>
     </div>
 <?php } else if (mc_is_archive()) { ?>
     <div class="date_list">
+    <h1>月份</h1>
     <ul>
 <?php mc_date_list(); ?>
     </ul>
     </div>
     <div class="tag_list">
+    <h1>标签</h1>
     <ul>
 <?php mc_tag_list(); ?>
     </ul>
