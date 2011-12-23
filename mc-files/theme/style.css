@@ -1,9 +1,10 @@
-body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:960px; margin:0 auto; background:#f9f9f9; }
+body { font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif; font-size:14px; width:960px; margin:0 auto; background:#FFF; }
 a { color:#44f; text-decoration:none; }
 a:hover { color:#bc0000; }
 p { padding:0; margin:16px 0; line-height:20px; }
 .clearer { clear:both; }
 img { border:0; }
+h1,h2,h3,h4,h5,h6,b,strong { color:#3f3f3f; }
 
 #main { width:960px; margin:0 auto; }
 #sitename { font-size:28px; color:#333; text-shadow: 0 1px 0 #fff; }
