@@ -282,4 +282,16 @@ function mc_the_link() {
 
   echo '<a href="/?post/'.$mc_post_id.'">'.$mc_post['title'].'</a>';
 }
+
+function mc_can_comment() {
+  global $mc_post_id, $mc_post;
+
+  return isset($mc_post['can_comment']) ? $mc_post['can_comment'] == '1' : true;
+}
+
+function mc_comment_code() {
+  global $mc_config;
+
+  echo isset($mc_config['comment_code']) ? $mc_config['comment_code'] : '';
+}
 ?>

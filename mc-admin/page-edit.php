@@ -1,24 +1,26 @@
 <?php
 require 'head.php';
 
-$page_file    = '';
-$page_path    = '';
-$page_state   = '';
-$page_title   = '';
-$page_content = '';
-$page_date    = '';
-$page_time    = '';
-$error_msg    = '';
-$succeed      = false;
+$page_file        = '';
+$page_path        = '';
+$page_state       = '';
+$page_title       = '';
+$page_content     = '';
+$page_date        = '';
+$page_time        = '';
+$page_can_comment = '';
+$error_msg        = '';
+$succeed          = false;
   
 if (isset($_POST['_IS_POST_BACK_'])) {
-  $page_file    = $_POST['file'];
-  $page_path    = $_POST['path'];
-  $page_state   = $_POST['state'];
-  $page_title   = trim($_POST['title']);
-  $page_content = trim($_POST['content']);
-  $page_date    = date("Y-m-d");
-  $page_time    = date("H:i:s");
+  $page_file        = $_POST['file'];
+  $page_path        = $_POST['path'];
+  $page_state       = $_POST['state'];
+  $page_title       = trim($_POST['title']);
+  $page_content     = trim($_POST['content']);
+  $page_date        = date("Y-m-d");
+  $page_time        = date("H:i:s");
+  $page_can_comment = $_POST['can_comment'];
 
   if ($_POST['year'] != '')
     $page_date = substr_replace($page_date, $_POST['year'], 0, 4);
@@ -95,12 +97,13 @@ if (isset($_POST['_IS_POST_BACK_'])) {
     }
     
     $data = array(
-      'file'  => $page_file,
-      'path'  => $page_path,
-      'state' => $page_state,
-      'title' => $page_title,
-      'date'  => $page_date,
-      'time'  => $page_time,
+      'file'        => $page_file,
+      'path'        => $page_path,
+      'state'       => $page_state,
+      'title'       => $page_title,
+      'date'        => $page_date,
+      'time'        => $page_time,
+      'can_comment' => $page_can_comment,
     );
     
     $index_file = '../mc-files/pages/index/'.$page_state.'.php';
@@ -126,13 +129,14 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   
   $data = unserialize(file_get_contents($file_path));
   
-  $page_file    = $data['file'];
-  $page_path    = $data['path'];
-  $page_state   = $data['state'];
-  $page_title   = $data['title'];
-  $page_content = $data['content'];
-  $page_date    = $data['date'];
-  $page_time    = $data['time'];
+  $page_file        = $data['file'];
+  $page_path        = $data['path'];
+  $page_state       = $data['state'];
+  $page_title       = $data['title'];
+  $page_content     = $data['content'];
+  $page_date        = $data['date'];
+  $page_time        = $data['time'];
+  $page_can_comment = isset($data['can_comment']) ? $data['can_comment'] : '1';
 }
 ?>
 <script type="text/javascript">
@@ -227,6 +231,11 @@ function empty_textbox_blur(target) {
 <?php } ?>
     </select>
     </div>
+    评论：
+    <select name="can_comment" style="margin-right:16px;">
+      <option value="1" <?php if ($page_can_comment == '1') echo 'selected="selected";'; ?>>允许</option>
+      <option value="0" <?php if ($page_can_comment == '0') echo 'selected="selected";'; ?>>禁用</option>
+    </select>
     状态：
     <select name="state" style="width:100px;">
       <option value="draft" <?php if ($page_state == 'draft') echo 'selected="selected"'; ?>>草稿</option>

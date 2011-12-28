@@ -10,6 +10,7 @@ if (isset($_POST['save'])) {
   $mc_config['site_link'] = $_POST['site_link'];
   $mc_config['user_nick'] = $_POST['user_nick'];
   $mc_config['user_name'] = $_POST['user_name'];
+  $mc_config['comment_code'] = $_POST['comment_code'];
   
   if ($_POST['user_pass'] != '')
     $mc_config['user_pass'] = $_POST['user_pass'];
@@ -30,6 +31,7 @@ $site_desc = $mc_config['site_desc'];
 $site_link = $mc_config['site_link'];
 $user_nick = $mc_config['user_nick'];
 $user_name = $mc_config['user_name'];
+$comment_code = isset($mc_config['comment_code']) ? $mc_config['comment_code'] : '';
 ?>
 <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
   <?php if ($display_info) { ?>
@@ -76,6 +78,12 @@ $user_name = $mc_config['user_name'];
       <div class="label">确认密码</div>
       <input class="textbox" type="password" />
       <div class="info"></div>
+    </div>
+    <div class="clear"></div>
+    <div class="field">
+      <div class="label">评论代码</div>
+      <textarea rows="5" class="textbox" name="comment_code"><?php echo htmlspecialchars($comment_code); ?></textarea>
+      <div class="info">第三方评论服务所提供的评论代码，例如：<a href="http://disqus.com/" target="_blank">Disqus</a>、<a href="http://open.weibo.com/widget/comments.php" target="_blank">新浪微博评论箱</a> 等。设置此选项后，MiniCMS就拥有了评论功能。</div>
     </div>
     <div class="clear"></div>
     <div class="field">

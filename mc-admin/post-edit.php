@@ -1,24 +1,26 @@
 <?php
 require 'head.php';
 
-$post_id      = '';
-$post_state   = '';
-$post_title   = '';
-$post_content = '';
-$post_tags    = array();
-$post_date    = '';
-$post_time    = '';
-$error_msg    = '';
-$succeed      = false;
+$post_id          = '';
+$post_state       = '';
+$post_title       = '';
+$post_content     = '';
+$post_tags        = array();
+$post_date        = '';
+$post_time        = '';
+$post_can_comment = '';
+$error_msg        = '';
+$succeed          = false;
   
 if (isset($_POST['_IS_POST_BACK_'])) {
-  $post_id      = $_POST['id'];
-  $post_state   = $_POST['state'];
-  $post_title   = trim($_POST['title']);
-  $post_content = trim($_POST['content']);
-  $post_tags    = explode(',', trim($_POST['tags']));
-  $post_date    = date("Y-m-d");
-  $post_time    = date("H:i:s");
+  $post_id          = $_POST['id'];
+  $post_state       = $_POST['state'];
+  $post_title       = trim($_POST['title']);
+  $post_content     = trim($_POST['content']);
+  $post_tags        = explode(',', trim($_POST['tags']));
+  $post_date        = date("Y-m-d");
+  $post_time        = date("H:i:s");
+  $post_can_comment  = $_POST['can_comment'];
 
   if ($_POST['year'] != '')
     $post_date = substr_replace($post_date, $_POST['year'], 0, 4);
@@ -88,12 +90,13 @@ if (isset($_POST['_IS_POST_BACK_'])) {
     }
     
     $data = array(
-      'id'    => $post_id,
-      'state' => $post_state,
-      'title' => $post_title,
-      'tags'  => $post_tags,
-      'date'  => $post_date,
-      'time'  => $post_time,
+      'id'          => $post_id,
+      'state'       => $post_state,
+      'title'       => $post_title,
+      'tags'        => $post_tags,
+      'date'        => $post_date,
+      'time'        => $post_time,
+      'can_comment'  => $post_can_comment,
     );
     
     $index_file = '../mc-files/posts/index/'.$post_state.'.php';
@@ -126,6 +129,7 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   $post_tags    = $data['tags'];
   $post_date    = $data['date'];
   $post_time    = $data['time'];
+  $post_can_comment = isset($data['can_comment']) ? $data['can_comment'] : '1';
 }
 ?>
 <script type="text/javascript">
@@ -220,6 +224,11 @@ function empty_textbox_blur(target) {
 <?php } ?>
     </select>
     </div>
+    评论：
+    <select name="can_comment" style="margin-right:16px;">
+      <option value="1" <?php if ($post_can_comment == '1') echo 'selected="selected";'; ?>>允许</option>
+      <option value="0" <?php if ($post_can_comment == '0') echo 'selected="selected";'; ?>>禁用</option>
+    </select>
     状态：
     <select name="state" style="width:100px;">
       <option value="draft" <?php if ($post_state == 'draft') echo 'selected="selected"'; ?>>草稿</option>
