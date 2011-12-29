@@ -16,7 +16,7 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   $post_id          = $_POST['id'];
   $post_state       = $_POST['state'];
   $post_title       = trim($_POST['title']);
-  $post_content     = trim($_POST['content']);
+  $post_content     = get_magic_quotes_gpc() ? stripslashes(trim($_POST['content'])) : trim($_POST['content']);
   $post_tags        = explode(',', trim($_POST['tags']));
   $post_date        = date("Y-m-d");
   $post_time        = date("H:i:s");

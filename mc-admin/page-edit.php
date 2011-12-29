@@ -17,7 +17,7 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   $page_path        = $_POST['path'];
   $page_state       = $_POST['state'];
   $page_title       = trim($_POST['title']);
-  $page_content     = trim($_POST['content']);
+  $page_content     = get_magic_quotes_gpc() ? stripslashes(trim($_POST['content'])) : trim($_POST['content']);;
   $page_date        = date("Y-m-d");
   $page_time        = date("H:i:s");
   $page_can_comment = $_POST['can_comment'];

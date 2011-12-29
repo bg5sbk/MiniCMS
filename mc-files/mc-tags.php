@@ -2,7 +2,7 @@
 function mc_site_name($print = true) {
   global $mc_config;
 
-  $site_name = $mc_config['site_name'];
+  $site_name = htmlspecialchars($mc_config['site_name']);
 
   if ($print) {
     echo $site_name;
@@ -15,7 +15,7 @@ function mc_site_name($print = true) {
 function mc_site_desc($print = true) {
   global $mc_config;
 
-  $site_desc = $mc_config['site_desc'];
+  $site_desc = htmlspecialchars($mc_config['site_desc']);
 
   if ($print) {
     echo $site_desc;
@@ -41,7 +41,7 @@ function mc_site_link($print = true) {
 function mc_nick_name($print = true) {
   global $mc_config;
 
-  $nick_name = $mc_config['user_nick'];
+  $nick_name = htmlspecialchars($mc_config['user_nick']);
 
   if ($print) {
     echo $nick_name;
@@ -95,7 +95,7 @@ function mc_tag_name($print=true) {
   global $mc_get_name;
 
   if ($print) {
-    echo $mc_get_name;
+    echo htmlspecialchars($mc_get_name);
     return;
   }
 
@@ -106,7 +106,7 @@ function mc_date_name($print=true) {
   global $mc_get_name;
 
   if ($print) {
-    echo $mc_get_name;
+    echo htmlspecialchars($mc_get_name);
     return;
   }
 
@@ -218,11 +218,11 @@ function mc_the_title($print = true) {
   global $mc_post;
 
   if ($print) {
-    echo $mc_post['title'];
+    echo htmlspecialchars($mc_post['title']);
     return;
   }
 
-  return $mc_post['title'];
+  return htmlspecialchars($mc_post['title']);
 }
 
 function mc_the_date($print = true) {
@@ -255,7 +255,7 @@ function mc_the_tags($item_begin='', $item_gap=', ', $item_end='') {
   $count = count($tags);
 
   for ($i = 0; $i < $count; $i ++) {
-    $tag = $tags[$i];
+    $tag = htmlspecialchars($tags[$i]);
     
     echo $item_begin.'<a href="/?tag/'.urlencode($tag).'/">'.$tag.'</a>'.$item_end;
 
@@ -280,7 +280,7 @@ function mc_the_content($print = true) {
 function mc_the_link() {
   global $mc_post_id, $mc_post;
 
-  echo '<a href="/?post/'.$mc_post_id.'">'.$mc_post['title'].'</a>';
+  echo '<a href="/?post/'.$mc_post_id.'">'.htmlspecialchars($mc_post['title']).'</a>';
 }
 
 function mc_can_comment() {
