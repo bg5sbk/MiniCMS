@@ -126,25 +126,55 @@ function mc_has_old() {
 }
 
 function mc_goto_old($text) {
-  global $mc_get_type, $mc_get_name, $mc_page_num;
+  global $mc_get_type, $mc_get_name, $mc_page_num, $mc_config;
 
-  if ($mc_get_type == 'tag')
-    echo  '<a href="/?tag/'.$mc_get_name.'/?page='.($mc_page_num + 1).'">'.$text.'</a>';
-  else
-    echo '<a href="/?page='.($mc_page_num + 1).'">'.$text.'</a>';
+  if ($mc_get_type == 'tag') {
+    echo '<a href="';
+    echo $mc_config['site_link'];
+    echo '/?tag/';
+    echo $mc_get_name;
+    echo '/?page=';
+    echo ($mc_page_num + 1);
+    echo '">';
+    echo $text;
+    echo '</a>';
+  } else {
+    echo '<a href="';
+    echo $mc_config['site_link'];
+    echo '/?page=';
+    echo ($mc_page_num + 1);
+    echo '">';
+    echo $text;
+    echo '</a>';
+  }
 }
 
 function mc_goto_new($text) {
-  global $mc_get_type, $mc_get_name, $mc_page_num;
+  global $mc_get_type, $mc_get_name, $mc_page_num, $mc_config;
 
-  if ($mc_get_type == 'tag')
-    echo  '<a href="/?tag/'.$mc_get_name.'/?page='.($mc_page_num - 1).'">'.$text.'</a>';
-  else
-    echo '<a href="/?page='.($mc_page_num - 1).'">'.$text.'</a>';
+  if ($mc_get_type == 'tag') {
+    echo '<a href="';
+    echo $mc_config['site_link'];
+    echo '/?tag/';
+    echo $mc_get_name;
+    echo '/?page=';
+    echo ($mc_page_num - 1);
+    echo '">';
+    echo $text;
+    echo '</a>';
+  } else {
+    echo '<a href="';
+    echo $mc_config['site_link'];
+    echo '/?page=';
+    echo ($mc_page_num - 1);
+    echo '">';
+    echo $text;
+    echo '</a>';
+  }
 }
 
 function mc_date_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
-  global $mc_dates;
+  global $mc_dates, $mc_config;
 
   if (isset($mc_dates)) {
     $date_count = count($mc_dates);
@@ -153,7 +183,9 @@ function mc_date_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
       $date = $mc_dates[$i];
 
       echo $item_begin;
-      echo '<a href="/?date/';
+      echo '<a href="';
+      echo $mc_config['site_link'];
+      echo '/?date/';
       echo $date;
       echo '/">';
       echo $date;
@@ -167,7 +199,7 @@ function mc_date_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
 }
 
 function mc_tag_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
-  global $mc_tags;
+  global $mc_tags, $mc_config;
 
   if (isset($mc_tags)) {
     $tag_count = count($mc_tags);
@@ -176,7 +208,9 @@ function mc_tag_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
       $tag = $mc_tags[$i];
 
       echo $item_begin;
-      echo '<a href="/?tag/';
+      echo '<a href="';
+      echo $mc_config['site_link'];
+      echo '/?tag/';
       echo urlencode($tag);
       echo '/">';
       echo $tag;
@@ -248,7 +282,7 @@ function mc_the_time($print = true) {
 }
 
 function mc_the_tags($item_begin='', $item_gap=', ', $item_end='') {
-  global $mc_post;
+  global $mc_post, $mc_config;
 
   $tags = $mc_post['tags'];
   
@@ -257,7 +291,15 @@ function mc_the_tags($item_begin='', $item_gap=', ', $item_end='') {
   for ($i = 0; $i < $count; $i ++) {
     $tag = htmlspecialchars($tags[$i]);
     
-    echo $item_begin.'<a href="/?tag/'.urlencode($tag).'/">'.$tag.'</a>'.$item_end;
+    echo $item_begin;
+    echo '<a href="';
+    echo $mc_config['site_link'];
+    echo '/?tag/';
+    echo urlencode($tag);
+    echo '/">';
+    echo $tag;
+    echo '</a>';
+    echo $item_end;
 
     if ($i < $count - 1)
       echo $item_gap;
@@ -278,9 +320,15 @@ function mc_the_content($print = true) {
 }
 
 function mc_the_link() {
-  global $mc_post_id, $mc_post;
+  global $mc_post_id, $mc_post, $mc_config;
 
-  echo '<a href="/?post/'.$mc_post_id.'">'.htmlspecialchars($mc_post['title']).'</a>';
+  echo '<a href="';
+  echo $mc_config['site_link'];
+  echo '/?post/';
+  echo $mc_post_id;
+  echo '">';
+  echo htmlspecialchars($mc_post['title']);
+  echo '</a>';
 }
 
 function mc_can_comment() {
