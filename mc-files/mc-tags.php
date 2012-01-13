@@ -312,21 +312,13 @@ function mc_the_content($print = true) {
   if (!isset($mc_data)) {
     global $mc_post_id;
 
-    $mc_data = unserialize(file_get_contents('mc-files/posts/data/'.$mc_post_id.'.dat')); 
+    $data = unserialize(file_get_contents('mc-files/posts/data/'.$mc_post_id.'.dat')); 
 
-    $html = Markdown($mc_data['content']);
-
-    unset($mc_data);
-    
-    if ($print) {
-      echo $html;
-      return;
-    }
-
-    return $html;
+    $html = Markdown($data['content']); 
   }
-
-  $html = Markdown($mc_data['content']);
+  else {
+    $html = Markdown($mc_data['content']);
+  }
 
   if ($print) {
     echo $html;

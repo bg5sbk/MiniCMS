@@ -87,6 +87,7 @@
   </div>
   <div class="clearer"></div>
   <div id="footer">本站由 <a href="http://1234n.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
+  <div style="display:none"><script src="http://s13.cnzz.com/stat.php?id=3728418&web_id=3728418" language="JavaScript"></script></div>
   </div>
 </body>
 </html>
