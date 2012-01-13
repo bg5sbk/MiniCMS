@@ -235,7 +235,7 @@ function goto_page(e)
   var eventSrc = evt.target||evt.srcElement;
 
   if ((e.keyCode || e.which) == 13) {
-    location.href = '?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&tag=<?php echo $filter_tag; ?>&page=' + eventSrc.value;
+    location.href = '?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&page=' + eventSrc.value;
   }
 }
 </script>
