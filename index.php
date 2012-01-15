@@ -22,11 +22,15 @@ else if (preg_match('|^date/([0-9]{4}-[0-9]{2})/(\?page=([0-9]+)){0,1}$|', $qs, 
 else if (preg_match('|^archive/$|', $qs, $matches)) {
   $mc_get_type = 'archive';
 }
+else if ($qs == 'rss/') {
+  $mc_get_type = 'rss';
+  $mc_get_name = '';
+  $mc_page_num = isset($_GET['page']) ? $_GET['page'] : 1;
+}
 else if (preg_match('|^(([-a-zA-Z0-5]+/)+)$|', $qs, $matches)) {
   $mc_get_type = 'page';
   $mc_get_name = substr($matches[1], 0, -1);
-}
-else {
+} else {
   $mc_get_type = 'index';
   $mc_get_name = '';
   $mc_page_num = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -126,5 +130,9 @@ else {
   $mc_post_count = count($mc_post_ids);
 }
 
-require 'mc-files/theme/index.php';
+
+if ($mc_get_type != 'rss')
+  require 'mc-files/theme/index.php';
+else
+  require 'mc-files/mc-rss.php';
 ?>
