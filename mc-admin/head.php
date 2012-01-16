@@ -60,7 +60,7 @@ function post_sort($a, $b) {
 </head>
 <body>
   <div id="menu">
-    <h3 id="menu_title"><a href="/"><?php echo htmlspecialchars($mc_config['site_name']); ?></a></h3>
+    <h3 id="menu_title"><a href="<?php echo $mc_config['site_link'] != '' ? $mc_config['site_link'] : '/'; ?>"><?php echo htmlspecialchars($mc_config['site_name']); ?></a></h3>
     <ul>
       <li <?php echo $page_file == 'post.php' || $page_file == 'post-edit.php' ? 'class="current"' : ''; ?>><a href="post.php">文章</a></li>
       <li <?php echo $page_file == 'page.php' || $page_file == 'page-edit.php' ? 'class="current"' : ''; ?>><a href="page.php">页面</a></li>
