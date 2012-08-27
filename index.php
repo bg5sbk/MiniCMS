@@ -3,7 +3,7 @@ require_once dirname(__FILE__).'/mc-files/mc-core.php';
 
 $mc_post_per_page = 10;
 
-$qs = $_SERVER['QUERY_STRING'];
+$qs = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
 
 if (preg_match('|^post/([a-z0-5]{6})$|', $qs, $matches)) {
   $mc_get_type = 'post';

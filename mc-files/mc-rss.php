@@ -18,14 +18,11 @@
   <generator>http://1234n.com/?projects/minicms/</generator>
 <?php while (mc_next_post()) { ?>
     <item>
-      <title><?php echo htmlspecialchars($mc_post['title']); ?></title>
-      <guid isPermaLink="false"><?php $mc_config['site_link'].'/?post/'.$mc_post_id; ?></guid>
+      <title><?php mc_the_title(); ?></title>
+      <guid isPermaLink="false"><?php mc_the_url(); ?></guid>
       <dc:creator><?php mc_nick_name(); ?></dc:creator>
       <pubDate><?php mc_the_date(); ?> <?php mc_the_time(); ?></pubDate>
-<?php $tags = $mc_post['tags']; ?>
-<?php foreach ($tags as $tag) { ?>
-      <category><![CDATA[<?php echo htmlspecialchars($tag); ?>]]></category>
-<?php } ?>
+<?php mc_the_tags("      <category><![CDATA[", "\n", "]]></category>"); echo "\n"; ?>
       <content:encoded><![CDATA[<?php mc_the_content();?>]]></content:encoded>
     </item>
 <?php   } ?>

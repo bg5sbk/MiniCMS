@@ -281,7 +281,7 @@ function mc_the_time($print = true) {
   return $mc_post['time'];
 }
 
-function mc_the_tags($item_begin='', $item_gap=', ', $item_end='') {
+function mc_the_tags($item_begin='', $item_gap=', ', $item_end='', $as_link = true) {
   global $mc_post, $mc_config;
 
   $tags = $mc_post['tags'];
@@ -292,13 +292,21 @@ function mc_the_tags($item_begin='', $item_gap=', ', $item_end='') {
     $tag = htmlspecialchars($tags[$i]);
     
     echo $item_begin;
-    echo '<a href="';
-    echo $mc_config['site_link'];
-    echo '/?tag/';
-    echo urlencode($tag);
-    echo '/">';
+
+    if ($as_link) {
+      echo '<a href="';
+      echo $mc_config['site_link'];
+      echo '/?tag/';
+      echo urlencode($tag);
+      echo '/">';
+    }
+
     echo $tag;
-    echo '</a>';
+
+    if ($as_link) {
+      echo '</a>';
+    }
+
     echo $item_end;
 
     if ($i < $count - 1)
@@ -332,12 +340,23 @@ function mc_the_link() {
   global $mc_post_id, $mc_post, $mc_config;
 
   echo '<a href="';
-  echo $mc_config['site_link'];
-  echo '/?post/';
-  echo $mc_post_id;
+  mc_the_url();
   echo '">';
   echo htmlspecialchars($mc_post['title']);
   echo '</a>';
+}
+
+function mc_the_url($print = true) {
+  global $mc_post_id, $mc_post, $mc_config;
+
+  $url = $mc_config['site_link'].'/?post/'.$mc_post_id;
+
+  if ($print) {
+    echo $url;
+    return;
+  }
+
+  return $url;
 }
 
 function mc_can_comment() {
