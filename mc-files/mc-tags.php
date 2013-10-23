@@ -239,6 +239,9 @@ function mc_next_post() {
   if ($mc_post_i == $mc_post_i_end)
     return false;
 
+  if (!isset($mc_post_ids[$mc_post_i]))
+    return false;
+
   $mc_post_id = $mc_post_ids[$mc_post_i];
   
   $mc_post = $mc_posts[$mc_post_id];
