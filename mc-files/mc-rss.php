@@ -19,7 +19,8 @@
 <?php while (mc_next_post()) { ?>
     <item>
       <title><?php mc_the_title(); ?></title>
-      <guid isPermaLink="false"><?php mc_the_url(); ?></guid>
+      <link><?php mc_the_url(); ?></link>
+      <guid><?php mc_the_url(); ?></guid>
       <dc:creator><?php mc_nick_name(); ?></dc:creator>
       <pubDate><?php mc_the_date(); ?> <?php mc_the_time(); ?></pubDate>
 <?php mc_the_tags("      <category><![CDATA[", "\n", "]]></category>"); echo "\n"; ?>
