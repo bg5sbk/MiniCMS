@@ -169,27 +169,14 @@ function empty_textbox_blur(target) {
   <?php if ($page_path == '') echo "创建页面"; else echo "编辑页面"; ?>
   </div>
   <div style="margin-bottom:20px;">
-    <input name="title" type="text" class="edit_textbox" value="<?php
-    if ($page_title == "") {
-      echo '在此输入标题" " style="color:#888;" onfocus="empty_textbox_focus(this)" onblur="empty_textbox_blur(this)';
-    }
-    else {
-      echo htmlspecialchars($page_title);
-    }
-    ?>"/>
+    <input name="title" type="text" class="edit_textbox" placeholder="在此输入标题" value="<?php echo htmlspecialchars($page_title); ?>"/>
   </div>
   <div style="margin-bottom:20px;">
-    <textarea name="content" class="edit_textarea"><?php echo htmlspecialchars($page_content); ?></textarea>
+    <?php require 'editor.php'; ?>
+    <?php editor($page_content); ?>
   </div>
   <div style="margin-bottom:20px;">
-    <input name="path" type="text" class="edit_textbox" value="<?php
-    if ($page_path == '') {
-      echo '在此输入页面路径，多级路径用英语斜杠(/)分割" " style="color:#888;" onfocus="empty_textbox_focus(this)" onblur="empty_textbox_blur(this)';
-    }
-    else {
-      echo htmlspecialchars($page_path);
-    }
-    ?>"/>
+    <input name="path" type="text" class="edit_textbox" placeholder="在此输入页面路径，多级路径用半角斜杠(/)分割" value="<?php echo htmlspecialchars($page_path); ?>"/>
   </div>
   <div style="margin-bottom:20px;text-align:right">
     <div style="float:left">

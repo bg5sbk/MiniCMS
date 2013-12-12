@@ -162,27 +162,14 @@ function empty_textbox_blur(target) {
   <?php if ($post_id == '') echo "撰写文章"; else echo "编辑文章"; ?>
   </div>
   <div style="margin-bottom:20px;">
-    <input name="title" type="text" class="edit_textbox" value="<?php
-    if ($post_title == "") {
-      echo '在此输入标题" " style="color:#888;" onfocus="empty_textbox_focus(this)" onblur="empty_textbox_blur(this)';
-    }
-    else {
-      echo htmlspecialchars($post_title);
-    }
-    ?>"/>
+    <input name="title" type="text" class="edit_textbox" placeholder="在此输入标题" value="<?php echo htmlspecialchars($post_title); ?>"/>
   </div>
   <div style="margin-bottom:20px;">
-    <textarea name="content" class="edit_textarea"><?php echo htmlspecialchars($post_content); ?></textarea>
+    <?php require 'editor.php'; ?>
+    <?php editor($post_content); ?>
   </div>
   <div style="margin-bottom:20px;">
-    <input name="tags" type="text" class="edit_textbox" value="<?php
-    if (count($post_tags) == 0) {
-      echo '在此输入标签，多个标签用英语逗号(,)分隔" " style="color:#888;" onfocus="empty_textbox_focus(this)" onblur="empty_textbox_blur(this)';
-    }
-    else {
-      echo htmlspecialchars(implode(',', $post_tags));
-    }
-    ?>"/>
+    <input name="tags" type="text" class="edit_textbox" placeholder="在此输入标签，多个标签之间用逗号分隔" value="<?php echo htmlspecialchars(implode(',', $post_tags)); ?>"/>
   </div>
   <div style="margin-bottom:20px;text-align:right">
     <div style="float:left">

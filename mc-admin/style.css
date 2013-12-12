@@ -70,4 +70,4 @@ div.updated, div.error { border-radius:3px; border-style:solid; border-width:1px
 .small_form2 .info { width:300px; float:left; margin-left:40px; }
 
 .edit_textbox { width:99%;border:solid 1px #ccc; font-size:20px; padding:3px 4px; border-radius:3px; }
-.edit_textarea { height:400px;width:99%;font-size:13px;border:solid 1px #ccc;padding:3px 4px; border-radius:3px; resize:vertical; }
+.edit_textarea { height:400px;width:99%;font-size:13px;border:solid 1px #ccc;padding:3px 4px; border-radius:3px; }
