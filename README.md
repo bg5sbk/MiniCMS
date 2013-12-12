@@ -34,9 +34,9 @@ mc-files           内容
 URL格式
 =======
 
-文章:   http://1234n.com/?post/[a-z0-5]{6}  
-标签:   http://1234n.com/?tag/[^/]+/
-页面:   http://1234n.com/?([-a-zA-Z0-5]+/)+
+文章: http://1234n.com/?post/[a-z0-5]{6}  
+标签: http://1234n.com/?tag/[^/]+/  
+页面: http://1234n.com/?([-a-zA-Z0-5]+/)+
  
 模板标签
 =======
