@@ -1,19 +1,6 @@
 <?php function editor($content) { ?>
-    <div id="editor" class="edit_textarea"><?php echo htmlspecialchars($content); ?></div>
-    <input type="hidden" id="input_content" name="content"/>
-    <script src="ace-builds/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+    <textarea id="editor" name="content" class="edit_textarea"><?php echo htmlspecialchars($content); ?></textarea>
     <script>
-      var editor = ace.edit("editor");
-      editor.getSession().setMode("ace/mode/markdown");
-      editor.getSession().setUseWrapMode(true);
-      editor.setShowPrintMargin(false);
-      editor.renderer.setShowGutter(false);
-
-      var input_content = document.getElementById('input_content');
-      editor.getSession().on('change', function(){
-        input_content.value = editor.getSession().getValue();
-      });
-
       function getPageSize() {
           var xScroll, yScroll;
           if (window.innerHeight && window.scrollMaxY) {
@@ -66,7 +53,6 @@
       function resizeEditor() {
         var e = document.getElementById('editor');
         e.style.height = (getPageSize()[3] - e.offsetTop - 250) + 'px';
-        editor.resize();
       }
 
       window.onload = resizeEditor;
