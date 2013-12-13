@@ -1,5 +1,11 @@
 <?php
-$version = '1.1';
+if ($argc != 2) {
+	echo "必须指定版本号";
+	exit;
+}
+
+$version=$argv[1];
+
 $dirs = array(
 	".",
 );
@@ -9,7 +15,7 @@ echo <<<HTML
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<title>MiniCMS V1.1安装程序</title>
+<title>MiniCMS安装程序</title>
 <style>
 * {padding:0;margin:0;font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif;}
 html,body { height:100%; }
@@ -136,7 +142,7 @@ function build($dirs) {
 		if ($dh = opendir($dir)) {
 			$sub_dirs = array();
 			while (($item = readdir($dh)) !== false) {
-				if ($item[0] == '.')
+				if ($item[0] == '.' || ($dir == "." && $item == "build.php"))
 					continue;
 
 				$file = $dir."/".$item;
