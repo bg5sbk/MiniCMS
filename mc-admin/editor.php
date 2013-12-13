@@ -5,6 +5,7 @@
     <script>
       var editor = ace.edit("editor");
       editor.getSession().setMode("ace/mode/markdown");
+      editor.getSession().setUseWrapMode(true);
       editor.setShowPrintMargin(false);
       editor.renderer.setShowGutter(false);
 
