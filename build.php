@@ -1,4 +1,5 @@
 <?php
+$version = '1.1';
 $dirs = array(
 	".",
 );
@@ -55,7 +56,7 @@ window.onload = window.onresize = function(){
 <body style="background:#f2f2f2;">
   <div id="main">
     <div style="font-size:32px;font-weight:bold;text-align:center;padding-top:40px;">MiniCMS安装程序</div>
-    <div style="font-size:13px;color:#888;text-align:center;padding:10px 0 20px;">V 1.1</div>
+    <div style="font-size:13px;color:#888;text-align:center;padding:10px 0 20px;">v{$version}</div>
     <div id="mainbox">
     <?php if (!isset(\$_POST["start_install"])) { ?>
     <form method="post" action="<?php echo \$_SERVER['PHP_SELF']; ?>">
@@ -96,7 +97,7 @@ build($dirs);
 echo '  $is_upgrade=true;'."\n";
 echo "  if (!is_file('mc-files/mc-conf.php')) {\n";
 echo '    $is_upgrade=false;'."\n";
-echo '    file_put_contents(\'mc-files/mc-conf.php\', \'<?php $mc_config = array("site_link"=>"","site_name"=>"{$_POST[\\\'sitename\\\']}","site_desc"=>"又一个MiniCMS网站","user_name"=>"{$_POST[\\\'username\\\']}","user_pass"=>"{$_POST[\\\'password\\\']}","user_nick"=>"{$_POST[\\\'nickname\\\']}","comment_code"=>"");?>\');';
+echo '    file_put_contents(\'mc-files/mc-conf.php\', "<?php \$mc_config = array(\'version\'=>\''.$version.'\', \'site_link\'=>\'\',\'site_name\'=>\'{$_POST[\'sitename\']}\',\'site_desc\'=>\'又一个MiniCMS网站\',\'user_name\'=>\'{$_POST[\'username\']}\',\'user_pass\'=>\'{$_POST[\'password\']}\',\'user_nick\'=>\'{$_POST[\'nickname\']}\',\'comment_code\'=>\'\');?>");';
 echo "  }\n";
 echo "  if (!is_dir('mc-files/pages/index')) {\n";
 echo "    mkdir('mc-files/pages/index', 0744, true);\n";
