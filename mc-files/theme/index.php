@@ -5,10 +5,8 @@
 <meta charset="UTF-8" />
 <title><?php if (mc_is_post() || mc_is_page()) { mc_the_title(); ?> | <?php mc_site_name(); } else { mc_site_name(); ?> | <?php mc_site_desc(); }?></title>
 <link href="<?php mc_theme_url('style.css'); ?>" type="text/css" rel="stylesheet"/>
-<link href="<?php mc_theme_url('prettify/prettify.css'); ?>" type="text/css" rel="stylesheet"/>
-<script type="text/javascript" src="<?php mc_theme_url('prettify/prettify.js'); ?>"></script>
 </head>
-<body onload="prettyPrint()">
+<body>
   <div id="main">
   <div id="header">
     <div id="sitename"><a href="<?php mc_site_link(); ?>"><?php mc_site_name(); ?></a></div>

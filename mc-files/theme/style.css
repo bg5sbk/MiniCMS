@@ -46,7 +46,7 @@ h1,h2,h3,h4,h5,h6,b,strong { color:#3f3f3f; }
 #page_bar { margin-top:20px; }
 
 #footer { text-align:center; margin:30px 0; color:#888; }
-pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#fff; color:#000; font-family: monospace; border:solid 1px #afafaf; }
+pre, pre.code, pre.prettyprint { margin-bottom:18px; padding:10px !important; font-size:13px; background:#fff; color:#000; font-family: monospace; border:solid 1px #afafaf; overflow-x:scroll;}
 pre * { font-family: monospace; }
 
 .page_nav { float:right; border-right:solid 1px #ccc; }
