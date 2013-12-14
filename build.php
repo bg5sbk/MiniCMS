@@ -87,10 +87,12 @@ window.onload = window.onresize = function(){
         if (\$install_failed)
         	return;
 
+        echo "解压 \$file";
+
         \$dir = dirname(\$file);
 
-        if (is_dir(\$dir) || mkdir(\$dir, 0744, true)) {
-          if (!file_put_contents(\$file, gzuncompress(base64_decode(\$content)))) {
+        if (is_dir(\$dir) || @mkdir(\$dir, 0744, true)) {
+          if (!@file_put_contents(\$file, gzuncompress(base64_decode(\$content)))) {
             \$install_failed = true;
             echo '[<span style="color:red;">失败</span>]';
           }
@@ -128,7 +130,7 @@ echo <<<HTML
         \$is_upgrade = false;
         echo '<br/>';
         echo "创建配置文件";
-        if (!file_put_contents('mc-files/mc-conf.php', 
+        if (!@file_put_contents('mc-files/mc-conf.php', 
         	"<?php \\\$mc_config = array(".
         	"'version' => '\$version',".
         	"'site_link' => '',".
@@ -148,13 +150,13 @@ echo <<<HTML
       if (!is_dir('mc-files/posts/index')) {
         echo '<br/>';
         echo "创建文章索引目录";
-        if (mkdir('mc-files/posts/index', 0744, true)) {
+        if (@mkdir('mc-files/posts/index', 0744, true)) {
           echo '<br/>';
           echo "创建页面索引文件";
           if (
-            !file_put_contents('mc-files/posts/index/delete.php', '<?php \$mc_posts=array(); ?>') ||
-            !file_put_contents('mc-files/posts/index/publish.php', '<?php \$mc_posts=array(); ?>') ||
-            !file_put_contents('mc-files/posts/index/draft.php', '<?php \$mc_posts=array(); ?>')
+            !@file_put_contents('mc-files/posts/index/delete.php', '<?php \$mc_posts=array(); ?>') ||
+            !@file_put_contents('mc-files/posts/index/publish.php', '<?php \$mc_posts=array(); ?>') ||
+            !@file_put_contents('mc-files/posts/index/draft.php', '<?php \$mc_posts=array(); ?>')
           ) {
             \$install_failed = true;
             echo '[<span style="color:red;">失败</span>]';
@@ -171,13 +173,13 @@ echo <<<HTML
       if (!is_dir('mc-files/pages/index')) {
         echo '<br/>';
         echo "创建页面索引目录";
-        if (mkdir('mc-files/pages/index', 0744, true)) {
+        if (@mkdir('mc-files/pages/index', 0744, true)) {
           echo '<br/>';
           echo "创建页面索引文件";
           if (
-            !file_put_contents('mc-files/pages/index/delete.php', '<?php \$mc_pages=array(); ?>') ||
-            !file_put_contents('mc-files/pages/index/publish.php', '<?php \$mc_pages=array(); ?>') ||
-            !file_put_contents('mc-files/pages/index/draft.php', '<?php \$mc_pages=array(); ?>')
+            !@file_put_contents('mc-files/pages/index/delete.php', '<?php \$mc_pages=array(); ?>') ||
+            !@file_put_contents('mc-files/pages/index/publish.php', '<?php \$mc_pages=array(); ?>') ||
+            !@file_put_contents('mc-files/pages/index/draft.php', '<?php \$mc_pages=array(); ?>')
           ) {
             \$install_failed = true;
             echo '[<span style="color:red;">失败</span>]';
@@ -239,7 +241,6 @@ function build($dirs) {
 				if (is_dir($file)) {
 					$sub_dirs[] = $file;
 				} else {
-					echo "      echo \"解压 $file\";\n";
 					echo "      install('$file', <<<DATA\n";
 					echo base64_encode(gzcompress(file_get_contents($file)));
 					echo "\nDATA\n);\n";
