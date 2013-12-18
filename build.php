@@ -15,9 +15,76 @@ echo <<<HTML
 <style>
 * {padding:0;margin:0;font-family:"Microsoft YaHei",Segoe UI,Tahoma,Arial,Verdana,sans-serif;}
 html,body { height:100%; }
-body {background:#f9f9f9; font-size:14px;}
+body {background:#f5f5f5; color:#2d2d2d; font-size:14px;}
 #main {position:absolute; left:50%; top:50%;}
-#mainbox {background:#fff;border:1px solid #ccc; padding:20px; -webkit-border-radius:10px; -moz-border-radius:10px; border-radius:10px; margin-bottom:20px; }
+#mainbox {
+background-color: #fff; 
+border: 1px solid #e5e5e5; 
+-webkit-border-radius: 5px; 
+-moz-border-radius: 5px; 
+border-radius: 5px; 
+-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .05); 
+-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .05); 
+box-shadow: 0 1px 2px rgba(0, 0, 0, .05); 
+padding:20px; 
+margin-bottom:20px; 
+}
+.btn {
+display: inline-block;
+padding: 4px 12px;
+margin-bottom: 0;
+font-size: 15px;
+line-height: 21px;
+color: #434848;
+text-align: center;
+text-shadow: 0 1px 1px rgba(255,255,255,0.75);
+vertical-align: middle;
+cursor: pointer;
+background-color: #f8f8f8;
+background-image: -moz-linear-gradient(top,#fff,#eee);
+background-image: -webkit-gradient(linear,0 0,0 100%,from(#fff),to(#eee));
+background-image: -webkit-linear-gradient(top,#fff,#eee);
+background-image: -o-linear-gradient(top,#fff,#eee);
+background-image: linear-gradient(to bottom,#fff,#eee);
+background-repeat: repeat-x;
+border: 1px solid #ccc;
+border-color: #eee #eee #c8c8c8;
+border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+border-bottom-color: #b3b3b3;
+-webkit-border-radius: 4px;
+-moz-border-radius: 4px;
+border-radius: 4px;
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff',endColorstr='#ffeeeeee',GradientType=0);
+filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+-webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+-moz-box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.2),0 1px 2px rgba(0,0,0,0.05);
+}
+.btn-primary {
+color: #fff;
+text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+background-color: #0aaaf1;
+background-image: -moz-linear-gradient(top,#11b6ff,#09d);
+background-image: -webkit-gradient(linear,0 0,0 100%,from(#11b6ff),to(#09d));
+background-image: -webkit-linear-gradient(top,#11b6ff,#09d);
+background-image: -o-linear-gradient(top,#11b6ff,#09d);
+background-image: linear-gradient(to bottom,#11b6ff,#09d);
+background-repeat: repeat-x;
+border-color: #09d #09d #006491;
+border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff11b6ff',endColorstr='#ff0099dd',GradientType=0);
+filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.btn:hover, .btn:focus {
+color: #fff;
+background-color: #09d;
+text-decoration: none;
+background-position: 0 -15px;
+-webkit-transition: background-position .1s linear;
+-moz-transition: background-position .1s linear;
+-o-transition: background-position .1s linear;
+transition: background-position .1s linear;
+}
 label { font-weight:bold; color:#333; font-size:12px; }
 .textbox input { border:none; padding:0; font-size:18px; width:312px; color:#333; outline:0; }
 .textbox { border:1px solid #e0e0e0; padding:6px; margin:6px 0 20px; border-radius:3px 3px 3px 3px; }
@@ -71,10 +138,10 @@ window.onload = window.onresize = function(){
       <div class="textbox"><input type="text" name="username" value="admin"/></div>
       <label>后台密码</label>
       <div class="textbox"><input type="text" name="password" value="123456"/></div>
-      <div style="text-align:center;"><input type="submit" name="start_install" value="开始安装" style="border:1px solid #ccc;background:#efefef;padding:8px 10px;font-size:16px;cursor:pointer;"/></div>
+      <div style="text-align:center;"><input type="submit" name="start_install" value="开始安装" class="btn btn-primary"/></div>
 <?php } else { ?>
       <div style="text-align:center;padding-bottom:20px;">检测到MiniCMS配置文件，将使用升级模式安装。</div>
-      <div style="text-align:center;"><input type="submit" name="start_install" value="开始升级" style="border:1px solid #ccc;background:#efefef;padding:8px 10px;font-size:16px;cursor:pointer;"/></div>
+      <div style="text-align:center;"><input type="submit" name="start_install" value="开始升级" class="btn btn-primary"/></div>
 <?php } ?>
     <form>
 <?php } ?>
@@ -108,6 +175,7 @@ window.onload = window.onresize = function(){
         <style> #main { min-width:400px; } </style>
         <div style="font-size:13px;color:#666;line-height:16px;padding:20px;margin:0 auto;">
 <?php
+
 HTML;
 
 $dirs = array(
@@ -204,7 +272,7 @@ echo <<<HTML
 <?php } ?>
     <div style="text-align:center;padding:20px 0 0;">
     <form method="get" action="/mc-admin">
-    <input type="submit" value="开始体验" style="border:1px solid #ccc;background:#efefef;padding:8px 10px;font-size:16px;cursor:pointer;"/>
+    <input type="submit" value="开始体验" class="btn btn-primary"/>
     </form>
     </div>
 <?php } ?>
@@ -241,9 +309,9 @@ function build($dirs) {
 				if (is_dir($file)) {
 					$sub_dirs[] = $file;
 				} else {
-					echo "      install('$file', <<<DATA\n";
+					echo "install('$file', '";
 					echo base64_encode(gzcompress(file_get_contents($file)));
-					echo "\nDATA\n);\n";
+					echo "');\n";
 				}
 			}
 			closedir($dh);

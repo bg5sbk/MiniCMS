@@ -1,5 +1,5 @@
 <?php header("Content-Type: application/rss+xml"); ?>
-<?php echo '<?xml version="1.0" encoding="UTF-8"?>'; echo "\n"; ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0"
   xmlns:content="http://purl.org/rss/1.0/modules/content/"
   xmlns:wfw="http://wellformedweb.org/CommentAPI/"
