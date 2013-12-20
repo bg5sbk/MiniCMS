@@ -132,6 +132,11 @@ window.onload = window.onresize = function(){
 <?php if (!is_file('mc-files/mc-conf.php')) { ?>
       <label>网站标题</label>
       <div class="textbox"><input type="text" name="sitename" value="我的网站"/></div>
+      <label>网站地址</label>
+      <div class="textbox"><input type="text" name="sitelink" id="sitelink" value=""/></div>
+      <script type="text/javascript">
+      document.getElementById('sitelink').value = location.href.substring(0, location.href.lastIndexOf('/'));
+      </script>
       <label>您的昵称</label>
       <div class="textbox"><input type="text" name="nickname" value="神秘人"/></div>
       <label>后台账号</label>
@@ -201,7 +206,7 @@ echo <<<HTML
         if (!@file_put_contents('mc-files/mc-conf.php', 
         	"<?php \\\$mc_config = array(".
         	"'version' => '\$version',".
-        	"'site_link' => '',".
+        	"'site_link' => '{\$_POST['sitelink']}',".
         	"'site_name' => '{\$_POST['sitename']}',".
         	"'site_desc' => '又一个MiniCMS网站',".
         	"'user_name' => '{\$_POST['username']}',".
@@ -271,7 +276,7 @@ echo <<<HTML
      <div style=\"text-align:center;padding-top:20px;color:red;\">安装文件无法删除，请手工删除。</div>
 <?php } ?>
     <div style="text-align:center;padding:20px 0 0;">
-    <form method="get" action="/mc-admin">
+    <form method="get" action="mc-admin/">
     <input type="submit" value="开始体验" class="btn btn-primary"/>
     </form>
     </div>

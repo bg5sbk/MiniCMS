@@ -5,7 +5,7 @@ if (isset($_COOKIE['mc_token'])) {
   $token = $_COOKIE['mc_token'];
 
   if ($token == md5($mc_config['user_name'].'_'.$mc_config['user_pass'])) {
-    Header("Location:/mc-admin/post.php");
+    Header("Location:{$mc_config['site_link']}/mc-admin/post.php");
   }
 }
 
@@ -13,7 +13,7 @@ if (isset($_POST['login'])) {
   if ($_POST['user'] == $mc_config['user_name'] 
   && $_POST['pass'] == $mc_config['user_pass']) {
     setcookie('mc_token', md5($mc_config['user_name'].'_'.$mc_config['user_pass']));
-    Header("Location:/mc-admin/post.php");
+    Header("Location:{$mc_config['site_link']}/mc-admin/post.php");
   }
 }
 ?>

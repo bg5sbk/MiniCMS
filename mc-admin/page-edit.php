@@ -160,7 +160,7 @@ function empty_textbox_blur(target) {
   <input type="hidden" name="_IS_POST_BACK_" value=""/>
   <?php if ($succeed) { ?>
   <?php if ($page_state == 'publish') { ?>
-  <div class="updated">页面已发布。 <a href="/?<?php echo $page_path; ?>/" target="_blank">查看页面</a></div>
+  <div class="updated">页面已发布。 <a href="<?php echo $mc_config['site_link']; ?>/?<?php echo $page_path; ?>/" target="_blank">查看页面</a></div>
   <?php } else { ?>
   <div class="updated">页面已保存到“草稿箱”。 <a href="page.php?state=draft">打开草稿箱</a></div>
   <?php } ?>
