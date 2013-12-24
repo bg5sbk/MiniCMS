@@ -1,81 +1,258 @@
 <?php
 #
-# Markdown  -  A text-to-HTML conversion tool for web writers
+# Markdown Extra  -  A text-to-HTML conversion tool for web writers
 #
-# PHP Markdown  
+# PHP Markdown & Extra  
 # Copyright (c) 2004-2013 Michel Fortin  
-# <http://michelf.com/projects/php-markdown/>
+# <http://michelf.ca/projects/php-markdown/>
 #
 # Original Markdown  
 # Copyright (c) 2004-2006 John Gruber  
 # <http://daringfireball.net/projects/markdown/>
 #
-namespace Michelf;
+
+
+define( 'MARKDOWN_VERSION',  "1.0.2" ); # 29 Nov 2013
+define( 'MARKDOWNEXTRA_VERSION',  "1.2.8" ); # 29 Nov 2013
+
+
+#
+# Global default settings:
+#
+
+# Change to ">" for HTML output
+@define( 'MARKDOWN_EMPTY_ELEMENT_SUFFIX',  " />");
+
+# Define the width of a tab for code blocks.
+@define( 'MARKDOWN_TAB_WIDTH',     4 );
+
+# Optional title attribute for footnote links and backlinks.
+@define( 'MARKDOWN_FN_LINK_TITLE',         "" );
+@define( 'MARKDOWN_FN_BACKLINK_TITLE',     "" );
+
+# Optional class attribute for footnote links and backlinks.
+@define( 'MARKDOWN_FN_LINK_CLASS',         "" );
+@define( 'MARKDOWN_FN_BACKLINK_CLASS',     "" );
+
+# Optional class prefix for fenced code block.
+@define( 'MARKDOWN_CODE_CLASS_PREFIX',     "" );
+
+# Class attribute for code blocks goes on the `code` tag;
+# setting this to true will put attributes on the `pre` tag instead.
+@define( 'MARKDOWN_CODE_ATTR_ON_PRE',   false );
+
+
+#
+# WordPress settings:
+#
+
+# Change to false to remove Markdown from posts and/or comments.
+@define( 'MARKDOWN_WP_POSTS',      true );
+@define( 'MARKDOWN_WP_COMMENTS',   true );
+
+
+
+### Standard Function Interface ###
+
+@define( 'MARKDOWN_PARSER_CLASS',  'MarkdownExtra_Parser' );
+
+function Markdown($text) {
+#
+# Initialize the parser and return the result of its transform method.
+#
+	# Setup static parser variable.
+	static $parser;
+	if (!isset($parser)) {
+		$parser_class = MARKDOWN_PARSER_CLASS;
+		$parser = new $parser_class;
+	}
+
+	# Transform text using parser.
+	return $parser->transform($text);
+}
+
+
+### WordPress Plugin Interface ###
+
+/*
+Plugin Name: Markdown Extra
+Plugin Name: Markdown
+Plugin URI: http://michelf.ca/projects/php-markdown/
+Description: <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://michelf.ca/projects/php-markdown/">More...</a>
+Version: 1.2.8
+Author: Michel Fortin
+Author URI: http://michelf.ca/
+*/
+
+if (isset($wp_version)) {
+	# More details about how it works here:
+	# <http://michelf.ca/weblog/2005/wordpress-text-flow-vs-markdown/>
+	
+	# Post content and excerpts
+	# - Remove WordPress paragraph generator.
+	# - Run Markdown on excerpt, then remove all tags.
+	# - Add paragraph tag around the excerpt, but remove it for the excerpt rss.
+	if (MARKDOWN_WP_POSTS) {
+		remove_filter('the_content',     'wpautop');
+        remove_filter('the_content_rss', 'wpautop');
+		remove_filter('the_excerpt',     'wpautop');
+		add_filter('the_content',     'mdwp_MarkdownPost', 6);
+        add_filter('the_content_rss', 'mdwp_MarkdownPost', 6);
+		add_filter('get_the_excerpt', 'mdwp_MarkdownPost', 6);
+		add_filter('get_the_excerpt', 'trim', 7);
+		add_filter('the_excerpt',     'mdwp_add_p');
+		add_filter('the_excerpt_rss', 'mdwp_strip_p');
+		
+		remove_filter('content_save_pre',  'balanceTags', 50);
+		remove_filter('excerpt_save_pre',  'balanceTags', 50);
+		add_filter('the_content',  	  'balanceTags', 50);
+		add_filter('get_the_excerpt', 'balanceTags', 9);
+	}
+	
+	# Add a footnote id prefix to posts when inside a loop.
+	function mdwp_MarkdownPost($text) {
+		static $parser;
+		if (!$parser) {
+			$parser_class = MARKDOWN_PARSER_CLASS;
+			$parser = new $parser_class;
+		}
+		if (is_single() || is_page() || is_feed()) {
+			$parser->fn_id_prefix = "";
+		} else {
+			$parser->fn_id_prefix = get_the_ID() . ".";
+		}
+		return $parser->transform($text);
+	}
+	
+	# Comments
+	# - Remove WordPress paragraph generator.
+	# - Remove WordPress auto-link generator.
+	# - Scramble important tags before passing them to the kses filter.
+	# - Run Markdown on excerpt then remove paragraph tags.
+	if (MARKDOWN_WP_COMMENTS) {
+		remove_filter('comment_text', 'wpautop', 30);
+		remove_filter('comment_text', 'make_clickable');
+		add_filter('pre_comment_content', 'Markdown', 6);
+		add_filter('pre_comment_content', 'mdwp_hide_tags', 8);
+		add_filter('pre_comment_content', 'mdwp_show_tags', 12);
+		add_filter('get_comment_text',    'Markdown', 6);
+		add_filter('get_comment_excerpt', 'Markdown', 6);
+		add_filter('get_comment_excerpt', 'mdwp_strip_p', 7);
+	
+		global $mdwp_hidden_tags, $mdwp_placeholders;
+		$mdwp_hidden_tags = explode(' ',
+			'<p> </p> <pre> </pre> <ol> </ol> <ul> </ul> <li> </li>');
+		$mdwp_placeholders = explode(' ', str_rot13(
+			'pEj07ZbbBZ U1kqgh4w4p pre2zmeN6K QTi31t9pre ol0MP1jzJR '.
+			'ML5IjmbRol ulANi1NsGY J7zRLJqPul liA8ctl16T K9nhooUHli'));
+	}
+	
+	function mdwp_add_p($text) {
+		if (!preg_match('{^$|^<(p|ul|ol|dl|pre|blockquote)>}i', $text)) {
+			$text = '<p>'.$text.'</p>';
+			$text = preg_replace('{\n{2,}}', "</p>\n\n<p>", $text);
+		}
+		return $text;
+	}
+	
+	function mdwp_strip_p($t) { return preg_replace('{</?p>}i', '', $t); }
+
+	function mdwp_hide_tags($text) {
+		global $mdwp_hidden_tags, $mdwp_placeholders;
+		return str_replace($mdwp_hidden_tags, $mdwp_placeholders, $text);
+	}
+	function mdwp_show_tags($text) {
+		global $mdwp_hidden_tags, $mdwp_placeholders;
+		return str_replace($mdwp_placeholders, $mdwp_hidden_tags, $text);
+	}
+}
+
+
+### bBlog Plugin Info ###
+
+function identify_modifier_markdown() {
+	return array(
+		'name' => 'markdown',
+		'type' => 'modifier',
+		'nicename' => 'PHP Markdown Extra',
+		'description' => 'A text-to-HTML conversion tool for web writers',
+		'authors' => 'Michel Fortin and John Gruber',
+		'licence' => 'GPL',
+		'version' => MARKDOWNEXTRA_VERSION,
+		'help' => '<a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://michelf.ca/projects/php-markdown/">More...</a>',
+		);
+}
+
+
+### Smarty Modifier Interface ###
+
+function smarty_modifier_markdown($text) {
+	return Markdown($text);
+}
+
+
+### Textile Compatibility Mode ###
+
+# Rename this file to "classTextile.php" and it can replace Textile everywhere.
+
+if (strcasecmp(substr(__FILE__, -16), "classTextile.php") == 0) {
+	# Try to include PHP SmartyPants. Should be in the same directory.
+	@include_once 'smartypants.php';
+	# Fake Textile class. It calls Markdown instead.
+	class Textile {
+		function TextileThis($text, $lite='', $encode='') {
+			if ($lite == '' && $encode == '')    $text = Markdown($text);
+			if (function_exists('SmartyPants'))  $text = SmartyPants($text);
+			return $text;
+		}
+		# Fake restricted version: restrictions are not supported for now.
+		function TextileRestricted($text, $lite='', $noimage='') {
+			return $this->TextileThis($text, $lite);
+		}
+		# Workaround to ensure compatibility with TextPattern 4.0.3.
+		function blockLite($text) { return $text; }
+	}
+}
+
 
 
 #
 # Markdown Parser Class
 #
 
-class Markdown implements MarkdownInterface {
-
-	### Version ###
-
-	const  MARKDOWNLIB_VERSION  =  "1.4.0";
-
-	### Simple Function Interface ###
-
-	public static function defaultTransform($text) {
-	#
-	# Initialize the parser and return the result of its transform method.
-	# This will work fine for derived classes too.
-	#
-		# Take parser class on which this function was called.
-		$parser_class = \get_called_class();
-
-		# try to take parser from the static parser list
-		static $parser_list;
-		$parser =& $parser_list[$parser_class];
-
-		# create the parser it not already set
-		if (!$parser)
-			$parser = new $parser_class;
-
-		# Transform text using parser.
-		return $parser->transform($text);
-	}
+class Markdown_Parser {
 
 	### Configuration Variables ###
 
 	# Change to ">" for HTML output.
-	public $empty_element_suffix = " />";
-	public $tab_width = 4;
+	var $empty_element_suffix = MARKDOWN_EMPTY_ELEMENT_SUFFIX;
+	var $tab_width = MARKDOWN_TAB_WIDTH;
 	
 	# Change to `true` to disallow markup or entities.
-	public $no_markup = false;
-	public $no_entities = false;
+	var $no_markup = false;
+	var $no_entities = false;
 	
 	# Predefined urls and titles for reference links and images.
-	public $predef_urls = array();
-	public $predef_titles = array();
+	var $predef_urls = array();
+	var $predef_titles = array();
 
 
 	### Parser Implementation ###
 
 	# Regex to match balanced [brackets].
 	# Needed to insert a maximum bracked depth while converting to PHP.
-	protected $nested_brackets_depth = 6;
-	protected $nested_brackets_re;
+	var $nested_brackets_depth = 6;
+	var $nested_brackets_re;
 	
-	protected $nested_url_parenthesis_depth = 4;
-	protected $nested_url_parenthesis_re;
+	var $nested_url_parenthesis_depth = 4;
+	var $nested_url_parenthesis_re;
 
 	# Table of hash values for escaped characters:
-	protected $escape_chars = '\`*_{}[]()>#+-.!';
-	protected $escape_chars_re;
+	var $escape_chars = '\`*_{}[]()>#+-.!';
+	var $escape_chars_re;
 
 
-	public function __construct() {
+	function Markdown_Parser() {
 	#
 	# Constructor function. Initialize appropriate member variables.
 	#
@@ -100,15 +277,15 @@ class Markdown implements MarkdownInterface {
 
 
 	# Internal hashes used during transformation.
-	protected $urls = array();
-	protected $titles = array();
-	protected $html_hashes = array();
+	var $urls = array();
+	var $titles = array();
+	var $html_hashes = array();
 	
 	# Status flag to avoid invalid nesting.
-	protected $in_anchor = false;
+	var $in_anchor = false;
 	
 	
-	protected function setup() {
+	function setup() {
 	#
 	# Called before the transformation process starts to setup parser 
 	# states.
@@ -121,7 +298,7 @@ class Markdown implements MarkdownInterface {
 		$this->in_anchor = false;
 	}
 	
-	protected function teardown() {
+	function teardown() {
 	#
 	# Called after the transformation process to clear any variable 
 	# which may be taking up memory unnecessarly.
@@ -132,7 +309,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	public function transform($text) {
+	function transform($text) {
 	#
 	# Main function. Performs some preprocessing on the input text
 	# and pass it through the document gamut.
@@ -171,7 +348,7 @@ class Markdown implements MarkdownInterface {
 		return $text . "\n";
 	}
 	
-	protected $document_gamut = array(
+	var $document_gamut = array(
 		# Strip link definitions, store in hashes.
 		"stripLinkDefinitions" => 20,
 		
@@ -179,7 +356,7 @@ class Markdown implements MarkdownInterface {
 		);
 
 
-	protected function stripLinkDefinitions($text) {
+	function stripLinkDefinitions($text) {
 	#
 	# Strips link definitions from text, stores the URLs and titles in
 	# hash references.
@@ -213,7 +390,7 @@ class Markdown implements MarkdownInterface {
 			$text);
 		return $text;
 	}
-	protected function _stripLinkDefinitions_callback($matches) {
+	function _stripLinkDefinitions_callback($matches) {
 		$link_id = strtolower($matches[1]);
 		$url = $matches[2] == '' ? $matches[3] : $matches[2];
 		$this->urls[$link_id] = $url;
@@ -222,7 +399,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function hashHTMLBlocks($text) {
+	function hashHTMLBlocks($text) {
 		if ($this->no_markup)  return $text;
 
 		$less_than_tab = $this->tab_width - 1;
@@ -361,14 +538,14 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _hashHTMLBlocks_callback($matches) {
+	function _hashHTMLBlocks_callback($matches) {
 		$text = $matches[1];
 		$key  = $this->hashBlock($text);
 		return "\n\n$key\n\n";
 	}
 	
 	
-	protected function hashPart($text, $boundary = 'X') {
+	function hashPart($text, $boundary = 'X') {
 	#
 	# Called whenever a tag must be hashed when a function insert an atomic 
 	# element in the text stream. Passing $text to through this function gives
@@ -391,7 +568,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function hashBlock($text) {
+	function hashBlock($text) {
 	#
 	# Shortcut function for hashPart with block-level boundaries.
 	#
@@ -399,7 +576,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected $block_gamut = array(
+	var $block_gamut = array(
 	#
 	# These are all the transformations that form block-level
 	# tags like paragraphs, headers, and list items.
@@ -412,7 +589,7 @@ class Markdown implements MarkdownInterface {
 		"doBlockQuotes"     => 60,
 		);
 
-	protected function runBlockGamut($text) {
+	function runBlockGamut($text) {
 	#
 	# Run block gamut tranformations.
 	#
@@ -426,7 +603,7 @@ class Markdown implements MarkdownInterface {
 		return $this->runBasicBlockGamut($text);
 	}
 	
-	protected function runBasicBlockGamut($text) {
+	function runBasicBlockGamut($text) {
 	#
 	# Run block gamut tranformations, without hashing HTML blocks. This is 
 	# useful when HTML blocks are known to be already hashed, like in the first
@@ -443,7 +620,7 @@ class Markdown implements MarkdownInterface {
 	}
 	
 	
-	protected function doHorizontalRules($text) {
+	function doHorizontalRules($text) {
 		# Do Horizontal Rules:
 		return preg_replace(
 			'{
@@ -461,7 +638,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected $span_gamut = array(
+	var $span_gamut = array(
 	#
 	# These are all the transformations that occur *within* block-level
 	# tags like paragraphs, headers, and list items.
@@ -485,7 +662,7 @@ class Markdown implements MarkdownInterface {
 		"doHardBreaks"        =>  60,
 		);
 
-	protected function runSpanGamut($text) {
+	function runSpanGamut($text) {
 	#
 	# Run span gamut tranformations.
 	#
@@ -497,17 +674,17 @@ class Markdown implements MarkdownInterface {
 	}
 	
 	
-	protected function doHardBreaks($text) {
+	function doHardBreaks($text) {
 		# Do hard breaks:
 		return preg_replace_callback('/ {2,}\n/', 
 			array(&$this, '_doHardBreaks_callback'), $text);
 	}
-	protected function _doHardBreaks_callback($matches) {
+	function _doHardBreaks_callback($matches) {
 		return $this->hashPart("<br$this->empty_element_suffix\n");
 	}
 
 
-	protected function doAnchors($text) {
+	function doAnchors($text) {
 	#
 	# Turn Markdown link shortcuts into XHTML <a> tags.
 	#
@@ -577,7 +754,7 @@ class Markdown implements MarkdownInterface {
 		$this->in_anchor = false;
 		return $text;
 	}
-	protected function _doAnchors_reference_callback($matches) {
+	function _doAnchors_reference_callback($matches) {
 		$whole_match =  $matches[1];
 		$link_text   =  $matches[2];
 		$link_id     =& $matches[3];
@@ -611,7 +788,7 @@ class Markdown implements MarkdownInterface {
 		}
 		return $result;
 	}
-	protected function _doAnchors_inline_callback($matches) {
+	function _doAnchors_inline_callback($matches) {
 		$whole_match	=  $matches[1];
 		$link_text		=  $this->runSpanGamut($matches[2]);
 		$url			=  $matches[3] == '' ? $matches[4] : $matches[3];
@@ -632,7 +809,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function doImages($text) {
+	function doImages($text) {
 	#
 	# Turn Markdown image shortcuts into <img> tags.
 	#
@@ -687,7 +864,7 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _doImages_reference_callback($matches) {
+	function _doImages_reference_callback($matches) {
 		$whole_match = $matches[1];
 		$alt_text    = $matches[2];
 		$link_id     = strtolower($matches[3]);
@@ -715,7 +892,7 @@ class Markdown implements MarkdownInterface {
 
 		return $result;
 	}
-	protected function _doImages_inline_callback($matches) {
+	function _doImages_inline_callback($matches) {
 		$whole_match	= $matches[1];
 		$alt_text		= $matches[2];
 		$url			= $matches[3] == '' ? $matches[4] : $matches[3];
@@ -734,7 +911,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function doHeaders($text) {
+	function doHeaders($text) {
 		# Setext-style headers:
 		#	  Header 1
 		#	  ========
@@ -764,7 +941,7 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _doHeaders_callback_setext($matches) {
+	function _doHeaders_callback_setext($matches) {
 		# Terrible hack to check we haven't found an empty list item.
 		if ($matches[2] == '-' && preg_match('{^-(?: |$)}', $matches[1]))
 			return $matches[0];
@@ -773,14 +950,14 @@ class Markdown implements MarkdownInterface {
 		$block = "<h$level>".$this->runSpanGamut($matches[1])."</h$level>";
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}
-	protected function _doHeaders_callback_atx($matches) {
+	function _doHeaders_callback_atx($matches) {
 		$level = strlen($matches[1]);
 		$block = "<h$level>".$this->runSpanGamut($matches[2])."</h$level>";
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}
 
 
-	protected function doLists($text) {
+	function doLists($text) {
 	#
 	# Form HTML ordered (numbered) and unordered (bulleted) lists.
 	#
@@ -846,7 +1023,7 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _doLists_callback($matches) {
+	function _doLists_callback($matches) {
 		# Re-usable patterns to match list item bullets and number markers:
 		$marker_ul_re  = '[*+-]';
 		$marker_ol_re  = '\d+[\.]';
@@ -864,9 +1041,9 @@ class Markdown implements MarkdownInterface {
 		return "\n". $result ."\n\n";
 	}
 
-	protected $list_level = 0;
+	var $list_level = 0;
 
-	protected function processListItems($list_str, $marker_any_re) {
+	function processListItems($list_str, $marker_any_re) {
 	#
 	#	Process the contents of a single ordered or unordered list, splitting it
 	#	into individual list items.
@@ -912,7 +1089,7 @@ class Markdown implements MarkdownInterface {
 		$this->list_level--;
 		return $list_str;
 	}
-	protected function _processListItems_callback($matches) {
+	function _processListItems_callback($matches) {
 		$item = $matches[4];
 		$leading_line =& $matches[1];
 		$leading_space =& $matches[2];
@@ -937,7 +1114,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function doCodeBlocks($text) {
+	function doCodeBlocks($text) {
 	#
 	#	Process Markdown `<pre><code>` blocks.
 	#
@@ -955,7 +1132,7 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _doCodeBlocks_callback($matches) {
+	function _doCodeBlocks_callback($matches) {
 		$codeblock = $matches[1];
 
 		$codeblock = $this->outdent($codeblock);
@@ -969,7 +1146,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function makeCodeSpan($code) {
+	function makeCodeSpan($code) {
 	#
 	# Create a code span markup for $code. Called from handleSpanToken.
 	#
@@ -978,24 +1155,24 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected $em_relist = array(
+	var $em_relist = array(
 		''  => '(?:(?<!\*)\*(?!\*)|(?<!_)_(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'*' => '(?<=\S|^)(?<!\*)\*(?!\*)',
 		'_' => '(?<=\S|^)(?<!_)_(?!_)',
 		);
-	protected $strong_relist = array(
+	var $strong_relist = array(
 		''   => '(?:(?<!\*)\*\*(?!\*)|(?<!_)__(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'**' => '(?<=\S|^)(?<!\*)\*\*(?!\*)',
 		'__' => '(?<=\S|^)(?<!_)__(?!_)',
 		);
-	protected $em_strong_relist = array(
+	var $em_strong_relist = array(
 		''    => '(?:(?<!\*)\*\*\*(?!\*)|(?<!_)___(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'***' => '(?<=\S|^)(?<!\*)\*\*\*(?!\*)',
 		'___' => '(?<=\S|^)(?<!_)___(?!_)',
 		);
-	protected $em_strong_prepared_relist;
+	var $em_strong_prepared_relist;
 	
-	protected function prepareItalicsAndBold() {
+	function prepareItalicsAndBold() {
 	#
 	# Prepare regular expressions for searching emphasis tokens in any
 	# context.
@@ -1017,7 +1194,7 @@ class Markdown implements MarkdownInterface {
 		}
 	}
 	
-	protected function doItalicsAndBold($text) {
+	function doItalicsAndBold($text) {
 		$token_stack = array('');
 		$text_stack = array('');
 		$em = '';
@@ -1140,7 +1317,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function doBlockQuotes($text) {
+	function doBlockQuotes($text) {
 		$text = preg_replace_callback('/
 			  (								# Wrap whole match in $1
 				(?>
@@ -1155,7 +1332,7 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _doBlockQuotes_callback($matches) {
+	function _doBlockQuotes_callback($matches) {
 		$bq = $matches[1];
 		# trim one level of quoting - trim whitespace-only lines
 		$bq = preg_replace('/^[ ]*>[ ]?|^[ ]+$/m', '', $bq);
@@ -1169,14 +1346,14 @@ class Markdown implements MarkdownInterface {
 
 		return "\n". $this->hashBlock("<blockquote>\n$bq\n</blockquote>")."\n\n";
 	}
-	protected function _doBlockQuotes_callback2($matches) {
+	function _doBlockQuotes_callback2($matches) {
 		$pre = $matches[1];
 		$pre = preg_replace('/^  /m', '', $pre);
 		return $pre;
 	}
 
 
-	protected function formParagraphs($text) {
+	function formParagraphs($text) {
 	#
 	#	Params:
 	#		$text - string to process with html <p> tags
@@ -1246,7 +1423,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function encodeAttribute($text) {
+	function encodeAttribute($text) {
 	#
 	# Encode text for a double-quoted HTML attribute. This function
 	# is *not* suitable for attributes enclosed in single quotes.
@@ -1257,7 +1434,7 @@ class Markdown implements MarkdownInterface {
 	}
 	
 	
-	protected function encodeAmpsAndAngles($text) {
+	function encodeAmpsAndAngles($text) {
 	#
 	# Smart processing for ampersands and angle brackets that need to 
 	# be encoded. Valid character entities are left alone unless the
@@ -1269,7 +1446,7 @@ class Markdown implements MarkdownInterface {
 			# Ampersand-encoding based entirely on Nat Irons's Amputator
 			# MT plugin: <http://bumppo.net/projects/amputator/>
 			$text = preg_replace('/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/', 
-								'&amp;', $text);
+								'&amp;', $text);;
 		}
 		# Encode remaining <'s
 		$text = str_replace('<', '&lt;', $text);
@@ -1278,7 +1455,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function doAutoLinks($text) {
+	function doAutoLinks($text) {
 		$text = preg_replace_callback('{<((https?|ftp|dict):[^\'">\s]+)>}i', 
 			array(&$this, '_doAutoLinks_url_callback'), $text);
 
@@ -1306,25 +1483,25 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _doAutoLinks_tel_callback($matches) {
+	function _doAutoLinks_tel_callback($matches) {
 		$url = $this->encodeAttribute($matches[1]);
 		$tel = $this->encodeAttribute($matches[2]);
 		$link = "<a href=\"$url\">$tel</a>";
 		return $this->hashPart($link);
 	}
-	protected function _doAutoLinks_url_callback($matches) {
+	function _doAutoLinks_url_callback($matches) {
 		$url = $this->encodeAttribute($matches[1]);
 		$link = "<a href=\"$url\">$url</a>";
 		return $this->hashPart($link);
 	}
-	protected function _doAutoLinks_email_callback($matches) {
+	function _doAutoLinks_email_callback($matches) {
 		$address = $matches[1];
 		$link = $this->encodeEmailAddress($address);
 		return $this->hashPart($link);
 	}
 
 
-	protected function encodeEmailAddress($addr) {
+	function encodeEmailAddress($addr) {
 	#
 	#	Input: an email address, e.g. "foo@example.com"
 	#
@@ -1365,7 +1542,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function parseSpan($str) {
+	function parseSpan($str) {
 	#
 	# Take the string $str and parse it into tokens, hashing embeded HTML,
 	# escaped characters and handling code spans.
@@ -1425,7 +1602,7 @@ class Markdown implements MarkdownInterface {
 	}
 	
 	
-	protected function handleSpanToken($token, &$str) {
+	function handleSpanToken($token, &$str) {
 	#
 	# Handle $token provided by parseSpan by determining its nature and 
 	# returning the corresponding value that should replace it.
@@ -1449,7 +1626,7 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function outdent($text) {
+	function outdent($text) {
 	#
 	# Remove one level of line-leading tabs or spaces
 	#
@@ -1459,9 +1636,9 @@ class Markdown implements MarkdownInterface {
 
 	# String length function for detab. `_initDetab` will create a function to 
 	# hanlde UTF-8 if the default function does not exist.
-	protected $utf8_strlen = 'mb_strlen';
+	var $utf8_strlen = 'mb_strlen';
 	
-	protected function detab($text) {
+	function detab($text) {
 	#
 	# Replace tabs with the appropriate amount of space.
 	#
@@ -1474,7 +1651,7 @@ class Markdown implements MarkdownInterface {
 
 		return $text;
 	}
-	protected function _detab_callback($matches) {
+	function _detab_callback($matches) {
 		$line = $matches[0];
 		$strlen = $this->utf8_strlen; # strlen function for UTF-8.
 		
@@ -1491,7 +1668,7 @@ class Markdown implements MarkdownInterface {
 		}
 		return $line;
 	}
-	protected function _initDetab() {
+	function _initDetab() {
 	#
 	# Check for the availability of the function in the `utf8_strlen` property
 	# (initially `mb_strlen`). If the function is not available, create a 
@@ -1505,14 +1682,14 @@ class Markdown implements MarkdownInterface {
 	}
 
 
-	protected function unhash($text) {
+	function unhash($text) {
 	#
 	# Swap back in all the tags hashed by _HashHTMLBlocks.
 	#
 		return preg_replace_callback('/(.)\x1A[0-9]+\1/', 
 			array(&$this, '_unhash_callback'), $text);
 	}
-	protected function _unhash_callback($matches) {
+	function _unhash_callback($matches) {
 		return $this->html_hashes[$matches[0]];
 	}
 
@@ -1520,50 +1697,37 @@ class Markdown implements MarkdownInterface {
 
 
 #
-# Temporary Markdown Extra Parser Implementation Class
-#
-# NOTE: DON'T USE THIS CLASS
-# Currently the implementation of of Extra resides here in this temporary class.
-# This makes it easier to propagate the changes between the three different
-# packaging styles of PHP Markdown. When this issue is resolved, this
-# MarkdownExtra_TmpImpl class here will disappear and \Michelf\MarkdownExtra
-# will contain the code. So please use \Michelf\MarkdownExtra and ignore this
-# one.
+# Markdown Extra Parser Class
 #
 
-abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
+class MarkdownExtra_Parser extends Markdown_Parser {
 
 	### Configuration Variables ###
 
 	# Prefix for footnote ids.
-	public $fn_id_prefix = "";
+	var $fn_id_prefix = "";
 	
 	# Optional title attribute for footnote links and backlinks.
-	public $fn_link_title = "";
-	public $fn_backlink_title = "";
+	var $fn_link_title = MARKDOWN_FN_LINK_TITLE;
+	var $fn_backlink_title = MARKDOWN_FN_BACKLINK_TITLE;
 	
 	# Optional class attribute for footnote links and backlinks.
-	public $fn_link_class = "footnote-ref";
-	public $fn_backlink_class = "footnote-backref";
-
-	# Class name for table cell alignment (%% replaced left/center/right)
-	# For instance: 'go-%%' becomes 'go-left' or 'go-right' or 'go-center'
-	# If empty, the align attribute is used instead of a class name.
-	public $table_align_class_tmpl = '';
+	var $fn_link_class = MARKDOWN_FN_LINK_CLASS;
+	var $fn_backlink_class = MARKDOWN_FN_BACKLINK_CLASS;
 
 	# Optional class prefix for fenced code block.
-	public $code_class_prefix = "";
+	var $code_class_prefix = MARKDOWN_CODE_CLASS_PREFIX;
 	# Class attribute for code blocks goes on the `code` tag;
 	# setting this to true will put attributes on the `pre` tag instead.
-	public $code_attr_on_pre = false;
+	var $code_attr_on_pre = MARKDOWN_CODE_ATTR_ON_PRE;
 	
 	# Predefined abbreviations.
-	public $predef_abbr = array();
+	var $predef_abbr = array();
 
 
 	### Parser Implementation ###
 
-	public function __construct() {
+	function MarkdownExtra_Parser() {
 	#
 	# Constructor function. Initialize the parser object.
 	#
@@ -1589,23 +1753,23 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 			"doAbbreviations"    => 70,
 			);
 		
-		parent::__construct();
+		parent::Markdown_Parser();
 	}
 	
 	
 	# Extra variables used during extra transformations.
-	protected $footnotes = array();
-	protected $footnotes_ordered = array();
-	protected $footnotes_ref_count = array();
-	protected $footnotes_numbers = array();
-	protected $abbr_desciptions = array();
-	protected $abbr_word_re = '';
+	var $footnotes = array();
+	var $footnotes_ordered = array();
+	var $footnotes_ref_count = array();
+	var $footnotes_numbers = array();
+	var $abbr_desciptions = array();
+	var $abbr_word_re = '';
 	
 	# Give the current footnote number.
-	protected $footnote_counter = 1;
+	var $footnote_counter = 1;
 	
 	
-	protected function setup() {
+	function setup() {
 	#
 	# Setting up Extra-specific variables.
 	#
@@ -1627,7 +1791,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		}
 	}
 	
-	protected function teardown() {
+	function teardown() {
 	#
 	# Clearing Extra-specific variables.
 	#
@@ -1645,11 +1809,11 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	### Extra Attribute Parser ###
 
 	# Expression to use to catch attributes (includes the braces)
-	protected $id_class_attr_catch_re = '\{((?:[ ]*[#.][-_:a-zA-Z0-9]+){1,})[ ]*\}';
+	var $id_class_attr_catch_re = '\{((?:[ ]*[#.][-_:a-zA-Z0-9]+){1,})[ ]*\}';
 	# Expression to use when parsing in a context when no capture is desired
-	protected $id_class_attr_nocatch_re = '\{(?:[ ]*[#.][-_:a-zA-Z0-9]+){1,}[ ]*\}';
+	var $id_class_attr_nocatch_re = '\{(?:[ ]*[#.][-_:a-zA-Z0-9]+){1,}[ ]*\}';
 
-	protected function doExtraAttributes($tag_name, $attr) {
+	function doExtraAttributes($tag_name, $attr) {
 	#
 	# Parse attributes caught by the $this->id_class_attr_catch_re expression
 	# and return the HTML-formatted list of attributes.
@@ -1685,7 +1849,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function stripLinkDefinitions($text) {
+	function stripLinkDefinitions($text) {
 	#
 	# Strips link definitions from text, stores the URLs and titles in
 	# hash references.
@@ -1720,7 +1884,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 			$text);
 		return $text;
 	}
-	protected function _stripLinkDefinitions_callback($matches) {
+	function _stripLinkDefinitions_callback($matches) {
 		$link_id = strtolower($matches[1]);
 		$url = $matches[2] == '' ? $matches[3] : $matches[2];
 		$this->urls[$link_id] = $url;
@@ -1733,23 +1897,23 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	### HTML Block Parser ###
 	
 	# Tags that are always treated as block tags:
-	protected $block_tags_re = 'p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|address|form|fieldset|iframe|hr|legend|article|section|nav|aside|hgroup|header|footer|figcaption';
+	var $block_tags_re = 'p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|address|form|fieldset|iframe|hr|legend|article|section|nav|aside|hgroup|header|footer|figcaption';
 						   
 	# Tags treated as block tags only if the opening tag is alone on its line:
-	protected $context_block_tags_re = 'script|noscript|ins|del|iframe|object|source|track|param|math|svg|canvas|audio|video';
+	var $context_block_tags_re = 'script|noscript|ins|del|iframe|object|source|track|param|math|svg|canvas|audio|video';
 	
 	# Tags where markdown="1" default to span mode:
-	protected $contain_span_tags_re = 'p|h[1-6]|li|dd|dt|td|th|legend|address';
+	var $contain_span_tags_re = 'p|h[1-6]|li|dd|dt|td|th|legend|address';
 	
 	# Tags which must not have their contents modified, no matter where 
 	# they appear:
-	protected $clean_tags_re = 'script|math|svg';
+	var $clean_tags_re = 'script|math|svg';
 	
 	# Tags that do not need to be closed.
-	protected $auto_close_tags_re = 'hr|img|param|source|track';
+	var $auto_close_tags_re = 'hr|img|param|source|track';
 	
 
-	protected function hashHTMLBlocks($text) {
+	function hashHTMLBlocks($text) {
 	#
 	# Hashify HTML Blocks and "clean tags".
 	#
@@ -1774,7 +1938,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		
 		return $text;
 	}
-	protected function _hashHTMLBlocks_inMarkdown($text, $indent = 0,
+	function _hashHTMLBlocks_inMarkdown($text, $indent = 0, 
 										$enclosing_tag_re = '', $span = false)
 	{
 	#
@@ -2018,7 +2182,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		
 		return array($parsed, $text);
 	}
-	protected function _hashHTMLBlocks_inHTML($text, $hash_method, $md_attr) {
+	function _hashHTMLBlocks_inHTML($text, $hash_method, $md_attr) {
 	#
 	# Parse HTML, calling _HashHTMLBlocks_InMarkdown for block tags.
 	#
@@ -2193,7 +2357,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function hashClean($text) {
+	function hashClean($text) {
 	#
 	# Called whenever a tag must be hashed when a function inserts a "clean" tag
 	# in $text, it passes through this function and is automaticaly escaped, 
@@ -2203,7 +2367,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function doAnchors($text) {
+	function doAnchors($text) {
 	#
 	# Turn Markdown link shortcuts into XHTML <a> tags.
 	#
@@ -2274,7 +2438,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		$this->in_anchor = false;
 		return $text;
 	}
-	protected function _doAnchors_reference_callback($matches) {
+	function _doAnchors_reference_callback($matches) {
 		$whole_match =  $matches[1];
 		$link_text   =  $matches[2];
 		$link_id     =& $matches[3];
@@ -2310,7 +2474,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		}
 		return $result;
 	}
-	protected function _doAnchors_inline_callback($matches) {
+	function _doAnchors_inline_callback($matches) {
 		$whole_match	=  $matches[1];
 		$link_text		=  $this->runSpanGamut($matches[2]);
 		$url			=  $matches[3] == '' ? $matches[4] : $matches[3];
@@ -2334,7 +2498,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function doImages($text) {
+	function doImages($text) {
 	#
 	# Turn Markdown image shortcuts into <img> tags.
 	#
@@ -2390,7 +2554,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 
 		return $text;
 	}
-	protected function _doImages_reference_callback($matches) {
+	function _doImages_reference_callback($matches) {
 		$whole_match = $matches[1];
 		$alt_text    = $matches[2];
 		$link_id     = strtolower($matches[3]);
@@ -2420,7 +2584,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 
 		return $result;
 	}
-	protected function _doImages_inline_callback($matches) {
+	function _doImages_inline_callback($matches) {
 		$whole_match	= $matches[1];
 		$alt_text		= $matches[2];
 		$url			= $matches[3] == '' ? $matches[4] : $matches[3];
@@ -2441,7 +2605,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function doHeaders($text) {
+	function doHeaders($text) {
 	#
 	# Redefined to add id and class attribute support.
 	#
@@ -2481,7 +2645,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 
 		return $text;
 	}
-	protected function _doHeaders_callback_setext($matches) {
+	function _doHeaders_callback_setext($matches) {
 		if ($matches[3] == '-' && preg_match('{^- }', $matches[1]))
 			return $matches[0];
 		$level = $matches[3]{0} == '=' ? 1 : 2;
@@ -2489,7 +2653,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		$block = "<h$level$attr>".$this->runSpanGamut($matches[1])."</h$level>";
 		return "\n" . $this->hashBlock($block) . "\n\n";
 	}
-	protected function _doHeaders_callback_atx($matches) {
+	function _doHeaders_callback_atx($matches) {
 		$level = strlen($matches[1]);
 		$attr  = $this->doExtraAttributes("h$level", $dummy =& $matches[3]);
 		$block = "<h$level$attr>".$this->runSpanGamut($matches[2])."</h$level>";
@@ -2497,7 +2661,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function doTables($text) {
+	function doTables($text) {
 	#
 	# Form HTML tables.
 	#
@@ -2558,7 +2722,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 
 		return $text;
 	}
-	protected function _doTable_leadingPipe_callback($matches) {
+	function _doTable_leadingPipe_callback($matches) {
 		$head		= $matches[1];
 		$underline	= $matches[2];
 		$content	= $matches[3];
@@ -2568,15 +2732,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		
 		return $this->_doTable_callback(array($matches[0], $head, $underline, $content));
 	}
-	protected function _doTable_makeAlignAttr($alignname)
-	{
-		if (empty($this->table_align_class_tmpl))
-			return " align=\"$alignname\"";
-
-		$classname = str_replace('%%', $alignname, $this->table_align_class_tmpl);
-		return " class=\"$classname\"";
-	}
-	protected function _doTable_callback($matches) {
+	function _doTable_callback($matches) {
 		$head		= $matches[1];
 		$underline	= $matches[2];
 		$content	= $matches[3];
@@ -2589,14 +2745,10 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		# Reading alignement from header underline.
 		$separators	= preg_split('/ *[|] */', $underline);
 		foreach ($separators as $n => $s) {
-			if (preg_match('/^ *-+: *$/', $s))
-				$attr[$n] = $this->_doTable_makeAlignAttr('right');
-			else if (preg_match('/^ *:-+: *$/', $s))
-				$attr[$n] = $this->_doTable_makeAlignAttr('center');
-			else if (preg_match('/^ *:-+ *$/', $s))
-				$attr[$n] = $this->_doTable_makeAlignAttr('left');
-			else
-				$attr[$n] = '';
+			if (preg_match('/^ *-+: *$/', $s))		$attr[$n] = ' align="right"';
+			else if (preg_match('/^ *:-+: *$/', $s))$attr[$n] = ' align="center"';
+			else if (preg_match('/^ *:-+ *$/', $s))	$attr[$n] = ' align="left"';
+			else									$attr[$n] = '';
 		}
 		
 		# Parsing span elements, including code spans, character escapes, 
@@ -2640,7 +2792,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 	
-	protected function doDefLists($text) {
+	function doDefLists($text) {
 	#
 	# Form HTML definition lists.
 	#
@@ -2682,7 +2834,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 
 		return $text;
 	}
-	protected function _doDefLists_callback($matches) {
+	function _doDefLists_callback($matches) {
 		# Re-usable patterns to match list item bullets and number markers:
 		$list = $matches[1];
 		
@@ -2694,7 +2846,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function processDefListItems($list_str) {
+	function processDefListItems($list_str) {
 	#
 	#	Process the contents of a single definition list, splitting it
 	#	into individual term and definition list items.
@@ -2737,7 +2889,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 
 		return $list_str;
 	}
-	protected function _processDefListItems_callback_dt($matches) {
+	function _processDefListItems_callback_dt($matches) {
 		$terms = explode("\n", trim($matches[1]));
 		$text = '';
 		foreach ($terms as $term) {
@@ -2746,7 +2898,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		}
 		return $text . "\n";
 	}
-	protected function _processDefListItems_callback_dd($matches) {
+	function _processDefListItems_callback_dd($matches) {
 		$leading_line	= $matches[1];
 		$marker_space	= $matches[2];
 		$def			= $matches[3];
@@ -2766,7 +2918,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 
-	protected function doFencedCodeBlocks($text) {
+	function doFencedCodeBlocks($text) {
 	#
 	# Adding the fenced code block syntax to regular Markdown:
 	#
@@ -2805,7 +2957,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 
 		return $text;
 	}
-	protected function _doFencedCodeBlocks_callback($matches) {
+	function _doFencedCodeBlocks_callback($matches) {
 		$classname =& $matches[2];
 		$attrs     =& $matches[3];
 		$codeblock = $matches[4];
@@ -2826,7 +2978,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		
 		return "\n\n".$this->hashBlock($codeblock)."\n\n";
 	}
-	protected function _doFencedCodeBlocks_newlines($matches) {
+	function _doFencedCodeBlocks_newlines($matches) {
 		return str_repeat("<br$this->empty_element_suffix", 
 			strlen($matches[0]));
 	}
@@ -2836,24 +2988,24 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	# Redefining emphasis markers so that emphasis by underscore does not
 	# work in the middle of a word.
 	#
-	protected $em_relist = array(
+	var $em_relist = array(
 		''  => '(?:(?<!\*)\*(?!\*)|(?<![a-zA-Z0-9_])_(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'*' => '(?<=\S|^)(?<!\*)\*(?!\*)',
 		'_' => '(?<=\S|^)(?<!_)_(?![a-zA-Z0-9_])',
 		);
-	protected $strong_relist = array(
+	var $strong_relist = array(
 		''   => '(?:(?<!\*)\*\*(?!\*)|(?<![a-zA-Z0-9_])__(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'**' => '(?<=\S|^)(?<!\*)\*\*(?!\*)',
 		'__' => '(?<=\S|^)(?<!_)__(?![a-zA-Z0-9_])',
 		);
-	protected $em_strong_relist = array(
+	var $em_strong_relist = array(
 		''    => '(?:(?<!\*)\*\*\*(?!\*)|(?<![a-zA-Z0-9_])___(?!_))(?=\S|$)(?![\.,:;]\s)',
 		'***' => '(?<=\S|^)(?<!\*)\*\*\*(?!\*)',
 		'___' => '(?<=\S|^)(?<!_)___(?![a-zA-Z0-9_])',
 		);
 
 
-	protected function formParagraphs($text) {
+	function formParagraphs($text) {
 	#
 	#	Params:
 	#		$text - string to process with html <p> tags
@@ -2891,7 +3043,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	
 	### Footnotes
 	
-	protected function stripFootnotes($text) {
+	function stripFootnotes($text) {
 	#
 	# Strips link definitions from text, stores the URLs and titles in
 	# hash references.
@@ -2918,14 +3070,14 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 			$text);
 		return $text;
 	}
-	protected function _stripFootnotes_callback($matches) {
+	function _stripFootnotes_callback($matches) {
 		$note_id = $this->fn_id_prefix . $matches[1];
 		$this->footnotes[$note_id] = $this->outdent($matches[2]);
 		return ''; # String that will replace the block
 	}
 
 
-	protected function doFootnotes($text) {
+	function doFootnotes($text) {
 	#
 	# Replace footnote references in $text [^id] with a special text-token 
 	# which will be replaced by the actual footnote marker in appendFootnotes.
@@ -2937,7 +3089,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 	
-	protected function appendFootnotes($text) {
+	function appendFootnotes($text) {
 	#
 	# Append footnote list to text.
 	#
@@ -2949,8 +3101,8 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 			$text .= "<div class=\"footnotes\">\n";
 			$text .= "<hr". $this->empty_element_suffix ."\n";
 			$text .= "<ol>\n\n";
-
-			$attr = "";
+			
+			$attr = " rev=\"footnote\"";
 			if ($this->fn_backlink_class != "") {
 				$class = $this->fn_backlink_class;
 				$class = $this->encodeAttribute($class);
@@ -3001,7 +3153,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		}
 		return $text;
 	}
-	protected function _appendFootnotes_callback($matches) {
+	function _appendFootnotes_callback($matches) {
 		$node_id = $this->fn_id_prefix . $matches[1];
 		
 		# Create footnote marker only if it has a corresponding footnote *and*
@@ -3018,8 +3170,8 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 			} else {
 				$ref_count_mark = $this->footnotes_ref_count[$node_id] += 1;
 			}
-
-			$attr = "";
+			
+			$attr = " rel=\"footnote\"";
 			if ($this->fn_link_class != "") {
 				$class = $this->fn_link_class;
 				$class = $this->encodeAttribute($class);
@@ -3046,7 +3198,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	
 	### Abbreviations ###
 	
-	protected function stripAbbreviations($text) {
+	function stripAbbreviations($text) {
 	#
 	# Strips abbreviations from text, stores titles in hash references.
 	#
@@ -3061,7 +3213,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 			$text);
 		return $text;
 	}
-	protected function _stripAbbreviations_callback($matches) {
+	function _stripAbbreviations_callback($matches) {
 		$abbr_word = $matches[1];
 		$abbr_desc = $matches[2];
 		if ($this->abbr_word_re)
@@ -3072,7 +3224,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 	
 	
-	protected function doAbbreviations($text) {
+	function doAbbreviations($text) {
 	#
 	# Find defined abbreviations in text and wrap them in <abbr> elements.
 	#
@@ -3088,7 +3240,7 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 		}
 		return $text;
 	}
-	protected function _doAbbreviations_callback($matches) {
+	function _doAbbreviations_callback($matches) {
 		$abbr = $matches[0];
 		if (isset($this->abbr_desciptions[$abbr])) {
 			$desc = $this->abbr_desciptions[$abbr];
@@ -3104,3 +3256,92 @@ abstract class _MarkdownExtra_TmpImpl extends \Michelf\Markdown {
 	}
 
 }
+
+
+/*
+
+PHP Markdown Extra
+==================
+
+Description
+-----------
+
+This is a PHP port of the original Markdown formatter written in Perl 
+by John Gruber. This special "Extra" version of PHP Markdown features 
+further enhancements to the syntax for making additional constructs 
+such as tables and definition list.
+
+Markdown is a text-to-HTML filter; it translates an easy-to-read /
+easy-to-write structured text format into HTML. Markdown's text format
+is mostly similar to that of plain text email, and supports features such
+as headers, *emphasis*, code blocks, blockquotes, and links.
+
+Markdown's syntax is designed not as a generic markup language, but
+specifically to serve as a front-end to (X)HTML. You can use span-level
+HTML tags anywhere in a Markdown document, and you can use block level
+HTML tags (like <div> and <table> as well).
+
+For more information about Markdown's syntax, see:
+
+<http://daringfireball.net/projects/markdown/>
+
+
+Bugs
+----
+
+To file bug reports please send email to:
+
+<michel.fortin@michelf.ca>
+
+Please include with your report: (1) the example input; (2) the output you
+expected; (3) the output Markdown actually produced.
+
+
+Version History
+--------------- 
+
+See the readme file for detailed release notes for this version.
+
+
+Copyright and License
+---------------------
+
+PHP Markdown & Extra
+Copyright (c) 2004-2013 Michel Fortin
+<http://michelf.ca/>  
+All rights reserved.
+
+Based on Markdown  
+Copyright (c) 2003-2006 John Gruber   
+<http://daringfireball.net/>   
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+*	Redistributions of source code must retain the above copyright notice,
+	this list of conditions and the following disclaimer.
+
+*	Redistributions in binary form must reproduce the above copyright
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
+
+*	Neither the name "Markdown" nor the names of its contributors may
+	be used to endorse or promote products derived from this software
+	without specific prior written permission.
+
+This software is provided by the copyright holders and contributors "as
+is" and any express or implied warranties, including, but not limited
+to, the implied warranties of merchantability and fitness for a
+particular purpose are disclaimed. In no event shall the copyright owner
+or contributors be liable for any direct, indirect, incidental, special,
+exemplary, or consequential damages (including, but not limited to,
+procurement of substitute goods or services; loss of use, data, or
+profits; or business interruption) however caused and on any theory of
+liability, whether in contract, strict liability, or tort (including
+negligence or otherwise) arising in any way out of the use of this
+software, even if advised of the possibility of such damage.
+
+*/
+?>

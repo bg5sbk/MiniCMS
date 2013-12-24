@@ -1,7 +1,5 @@
 <?php
-require_once 'Michelf/MarkdownExtra.inc.php';
-
-use \Michelf\MarkdownExtra;
+require_once 'markdown.php';
 
 function mc_site_name($print = true) {
   global $mc_config;
@@ -329,10 +327,10 @@ function mc_the_content($print = true) {
 
     $data = unserialize(file_get_contents('mc-files/posts/data/'.$mc_post_id.'.dat')); 
 
-    $html = MarkdownExtra::defaultTransform($data['content']); 
+    $html = Markdown($data['content']); 
   }
   else {
-    $html = MarkdownExtra::defaultTransform($mc_data['content']);
+    $html = Markdown($mc_data['content']);
   }
 
   if ($print) {
