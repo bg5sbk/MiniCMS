@@ -7,9 +7,11 @@ if (isset($_COOKIE['mc_token'])) {
 
   if ($token != md5($mc_config['user_name'].'_'.$mc_config['user_pass'])) {
     Header("Location:index.php");
+    exit;
   }
 } else {
   Header("Location:index.php");
+  exit;
 }
 
 $page_file = basename($_SERVER['PHP_SELF']);
