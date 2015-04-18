@@ -5,6 +5,7 @@
 <meta charset="UTF-8" />
 <title><?php if (mc_is_post() || mc_is_page()) { mc_the_title(); ?> | <?php mc_site_name(); } else { mc_site_name(); ?> | <?php mc_site_desc(); }?></title>
 <link href="<?php mc_theme_url('style.css'); ?>" type="text/css" rel="stylesheet"/>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </head>
 <body>
   <div id="main">
@@ -85,5 +86,8 @@
   <div class="clearer"></div>
   <div id="footer">本站由 <a href="http://1234n.com/?projects/minicms/" target="_blank">MiniCMS</a> 提供动力</div>
   </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(", "\\)"]], processEscapes: true } });
+</script>
 </body>
 </html>
