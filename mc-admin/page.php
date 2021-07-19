@@ -272,11 +272,11 @@ function goto_page(e)
   </span>
   <span class="pager">
     共 <?php echo $page_count; ?> 项&nbsp;&nbsp;
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>">&laquo;</a>
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&page=<?php echo $prev_page; ?>">&lsaquo;</a>
-    第 <input type="text" value="<?php echo $page_num; ?>" id="page_input_1"/> 页,共 <?php echo $last_page; ?> 页
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&page=<?php echo $next_page; ?>">&rsaquo;</a>
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&page=<?php echo $last_page; ?>">&raquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>">&laquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>&page=<?php echo $prev_page; ?>">&lsaquo;</a>
+    第 <input type="text" value="<?php echo urlencode($page_num); ?>" id="page_input_1"/> 页,共 <?php echo $last_page; ?> 页
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>&page=<?php echo $next_page; ?>">&rsaquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>&page=<?php echo $last_page; ?>">&raquo;</a>
   </span>
   <script type="text/javascript">
   document.getElementById('page_input_1').onkeydown = goto_page;
@@ -293,18 +293,18 @@ function goto_page(e)
   <tbody>
   <?php for ($i = 0; $i < $page_count; $i ++) { if ($i < ($page_num - 1) * 10 || $i >= ($page_num * 10)) continue; $page_id = $page_ids[$i]; $page = $mc_pages[$page_id]; ?>
     <tr<?php if ($i % 2 == 0) echo ' class="alt"'; ?>>
-      <td><input type="checkbox" name="ids" value="<?php echo $page_id; ?>"/></td>
+      <td><input type="checkbox" name="ids" value="<?php echo htmlentities($page_id); ?>"/></td>
       <td>
         <a class="row_name" href="page-edit.php?file=<?php echo $page['file']; ?>"><?php echo htmlspecialchars($page['title']);?></a>
         <div class="row_tool">
           <a class="link_button" href="page-edit.php?file=<?php echo $page['file']; ?>">编辑</a>
           <?php if ($state == 'delete') { ?>
-          <a class="link_button" href="?revert=<?php echo $page_id; ?>&state=<?php echo $state; ?>&date=<?php echo $filter_date;?>">还原</a>
-          <a class="link_button" href="?delete=<?php echo $page_id; ?>&state=<?php echo $state; ?>&date=<?php echo $filter_date;?>">删除</a>
+          <a class="link_button" href="?revert=<?php echo urlencode($page_id); ?>&state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>">还原</a>
+          <a class="link_button" href="?delete=<?php echo urlencode($page_id); ?>&state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>">删除</a>
           <?php } else { ?>
-          <a class="link_button" href="?delete=<?php echo $page_id; ?>&state=<?php echo $state; ?>&date=<?php echo $filter_date;?>">回收</a>
+          <a class="link_button" href="?delete=<?php echo urlencode($page_id); ?>&state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>">回收</a>
           <?php } ?>
-          <a class="link_button" href="/?<?php echo $page_id; ?>/" target="_blank">查看</a>
+          <a class="link_button" href="<?php echo htmlentities($mc_config['site_link']); ?>/?<?php echo urlencode($page_id); ?>/" target="_blank">查看</a>
         </div>
       </td>
       <td><?php
@@ -313,7 +313,7 @@ function goto_page(e)
         for ($j = 0; $j < $paths_count - 1; $j ++) {
           echo '－';
         }
-        echo $paths[$paths_count - 1]; ?></td>
+        echo htmlspecialchars($paths[$paths_count - 1]); ?></td>
       <td><?php echo htmlspecialchars($page['date']);?></td>
     </tr>
   <?php } ?>
@@ -335,11 +335,11 @@ function goto_page(e)
   </span>
   <span class="pager">
     共 <?php echo $page_count; ?> 项&nbsp;&nbsp;
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>">&laquo;</a>
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&page=<?php echo $prev_page; ?>">&lsaquo;</a>
-    第 <input type="text" value="<?php echo $page_num; ?>" id="page_input_2"/> 页,共 <?php echo $last_page; ?> 页
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&page=<?php echo $next_page; ?>">&rsaquo;</a>
-    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo $filter_date;?>&page=<?php echo $last_page; ?>">&raquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>">&laquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>&page=<?php echo $prev_page; ?>">&lsaquo;</a>
+    第 <input type="text" value="<?php echo urlencode($page_num); ?>" id="page_input_2"/> 页,共 <?php echo $last_page; ?> 页
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>&page=<?php echo $next_page; ?>">&rsaquo;</a>
+    <a class="link_button" href="?state=<?php echo $state; ?>&date=<?php echo urlencode($filter_date);?>&page=<?php echo $last_page; ?>">&raquo;</a>
   </span>
   <script type="text/javascript">
   document.getElementById('page_input_2').onkeydown = goto_page;

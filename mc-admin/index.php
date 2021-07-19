@@ -36,7 +36,7 @@ body { background:#f9f9f9; font-size:14px; }
   </style>
 </head>
 <body>
-  <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+  <form action="<?php echo htmlentities($_SERVER['REQUEST_URI']); ?>" method="post">
   <div id="login_title">MiniCMS</div>
   <div id="login_form">
     <div id="login_form_box">

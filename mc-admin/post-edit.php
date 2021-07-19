@@ -16,11 +16,16 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   $post_id          = $_POST['id'];
   $post_state       = $_POST['state'];
   $post_title       = trim($_POST['title']);
-  $post_content     = get_magic_quotes_gpc() ? stripslashes(trim($_POST['content'])) : trim($_POST['content']);
+  $post_content     = trim($_POST['content']);
   $post_tags        = explode(',', trim($_POST['tags']));
   $post_date        = date("Y-m-d");
   $post_time        = date("H:i:s");
   $post_can_comment  = $_POST['can_comment'];
+
+  if ($post_state != "delete" && $post_state != "draft" && $post_state != "publish") {
+    Header("Location:index.php");
+    exit;
+  }
 
   if ($_POST['year'] != '')
     $post_date = substr_replace($post_date, $_POST['year'], 0, 4);
@@ -149,7 +154,7 @@ function empty_textbox_blur(target) {
   }
 }
 </script>
-<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+<form action="<?php echo htmlentities($_SERVER['REQUEST_URI']); ?>" method="post">
   <input type="hidden" name="_IS_POST_BACK_" value=""/>
   <?php if ($succeed) { ?>
   <?php if ($post_state == 'publish') { ?>
@@ -175,37 +180,37 @@ function empty_textbox_blur(target) {
     <div style="float:left">
     时间：
     <select name="year">
-      <option value=""></option>
+      <option value="">&nbsp;&nbsp;年</option>
 <?php $year = substr($post_date, 0, 4); for ($i = 1990; $i <= 2030; $i ++) { ?>
       <option value="<?php echo $i; ?>" <?php if ($year == $i) echo 'selected="selected";' ?>><?php echo $i; ?></option>
 <?php } ?>
     </select> -
     <select name="month">
-      <option value=""></option>
+      <option value="">月</option>
 <?php $month = substr($post_date, 5, 2); for ($i = 1; $i <= 12; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($month == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select> -
     <select name="day">
-      <option value=""></option>
+      <option value="">日</option>
 <?php $day = substr($post_date, 8, 2); for ($i = 1; $i <= 31; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($day == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select>&nbsp;
     <select name="hourse">
-      <option value=""></option>
+      <option value="">时</option>
 <?php $hourse = substr($post_time, 0, 2); for ($i = 0; $i <= 23; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($hourse == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select> :
     <select name="minute">
-      <option value=""></option>
+      <option value="">分</option>
 <?php $minute = substr($post_time, 3, 2); for ($i = 0; $i <= 59; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($minute == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select> :
     <select name="second">
-      <option value=""></option>
+      <option value="">秒</option>
 <?php $second = substr($post_time, 6, 2); for ($i = 0; $i <= 59; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($second == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>

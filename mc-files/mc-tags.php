@@ -1,5 +1,6 @@
 <?php
-require_once 'markdown.php';
+require_once dirname(__FILE__) . '/Michelf/MarkdownExtra.inc.php';
+use Michelf\MarkdownExtra;
 
 function mc_site_name($print = true) {
   global $mc_config;
@@ -30,7 +31,7 @@ function mc_site_desc($print = true) {
 function mc_site_link($print = true) {
   global $mc_config;
 
-  $site_link = $mc_config['site_link'];
+  $site_link = htmlentities($mc_config['site_link']);
 
   if ($print) {
     echo $site_link;
@@ -56,7 +57,7 @@ function mc_nick_name($print = true) {
 function mc_theme_url($path, $print = true) {
   global $mc_config;
 
-  $url = $mc_config['site_link'].'/mc-files/theme/'.$path;
+  $url = htmlentities($mc_config['site_link']).'/mc-files/theme/'.$path;
 
   if ($print) {
     echo $url;
@@ -132,9 +133,9 @@ function mc_goto_old($text) {
 
   if ($mc_get_type == 'tag') {
     echo '<a href="';
-    echo $mc_config['site_link'];
+    echo htmlentities($mc_config['site_link']);
     echo '/?tag/';
-    echo $mc_get_name;
+    echo htmlspecialchars($mc_get_name);
     echo '/?page=';
     echo ($mc_page_num + 1);
     echo '">';
@@ -142,7 +143,7 @@ function mc_goto_old($text) {
     echo '</a>';
   } else {
     echo '<a href="';
-    echo $mc_config['site_link'];
+    echo htmlentities($mc_config['site_link']);
     echo '/?page=';
     echo ($mc_page_num + 1);
     echo '">';
@@ -156,9 +157,9 @@ function mc_goto_new($text) {
 
   if ($mc_get_type == 'tag') {
     echo '<a href="';
-    echo $mc_config['site_link'];
+    echo htmlentities($mc_config['site_link']);
     echo '/?tag/';
-    echo $mc_get_name;
+    echo htmlspecialchars($mc_get_name);
     echo '/?page=';
     echo ($mc_page_num - 1);
     echo '">';
@@ -166,7 +167,7 @@ function mc_goto_new($text) {
     echo '</a>';
   } else {
     echo '<a href="';
-    echo $mc_config['site_link'];
+    echo htmlentities($mc_config['site_link']);
     echo '/?page=';
     echo ($mc_page_num - 1);
     echo '">';
@@ -186,7 +187,7 @@ function mc_date_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
 
       echo $item_begin;
       echo '<a href="';
-      echo $mc_config['site_link'];
+      echo htmlentities($mc_config['site_link']);
       echo '/?date/';
       echo $date;
       echo '/">';
@@ -211,11 +212,11 @@ function mc_tag_list($item_begin='<li>', $item_gap='', $item_end='</li>') {
 
       echo $item_begin;
       echo '<a href="';
-      echo $mc_config['site_link'];
+      echo htmlentities($mc_config['site_link']);
       echo '/?tag/';
       echo urlencode($tag);
       echo '/">';
-      echo $tag;
+      echo htmlspecialchars($tag);
       echo '</a>';
       echo $item_end;
 
@@ -294,19 +295,19 @@ function mc_the_tags($item_begin='', $item_gap=', ', $item_end='', $as_link = tr
   $count = count($tags);
 
   for ($i = 0; $i < $count; $i ++) {
-    $tag = htmlspecialchars($tags[$i]);
+    $tag = $tags[$i];
     
     echo $item_begin;
 
     if ($as_link) {
       echo '<a href="';
-      echo $mc_config['site_link'];
+      echo htmlentities($mc_config['site_link']);
       echo '/?tag/';
       echo urlencode($tag);
       echo '/">';
     }
 
-    echo $tag;
+    echo htmlspecialchars($tag);
 
     if ($as_link) {
       echo '</a>';
@@ -327,10 +328,10 @@ function mc_the_content($print = true) {
 
     $data = unserialize(file_get_contents('mc-files/posts/data/'.$mc_post_id.'.dat')); 
 
-    $html = Markdown($data['content']); 
+    $html = MarkdownExtra::defaultTransform($data['content']); 
   }
   else {
-    $html = Markdown($mc_data['content']);
+    $html = MarkdownExtra::defaultTransform($mc_data['content']);
   }
 
   if ($print) {
@@ -354,7 +355,7 @@ function mc_the_link() {
 function mc_the_url($print = true) {
   global $mc_post_id, $mc_post, $mc_config;
 
-  $url = $mc_config['site_link'].'/?post/'.$mc_post_id;
+  $url = htmlentities($mc_config['site_link']).'/?post/'.$mc_post_id;
 
   if ($print) {
     echo $url;

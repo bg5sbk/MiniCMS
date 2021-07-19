@@ -17,10 +17,15 @@ if (isset($_POST['_IS_POST_BACK_'])) {
   $page_path        = $_POST['path'];
   $page_state       = $_POST['state'];
   $page_title       = trim($_POST['title']);
-  $page_content     = get_magic_quotes_gpc() ? stripslashes(trim($_POST['content'])) : trim($_POST['content']);;
+  $page_content     = trim($_POST['content']);
   $page_date        = date("Y-m-d");
   $page_time        = date("H:i:s");
   $page_can_comment = $_POST['can_comment'];
+
+  if ($page_state != "delete" && $page_state != "draft" && $page_state != "publish") {
+    Header("Location:index.php");
+    exit;
+  }
 
   if ($_POST['year'] != '')
     $page_date = substr_replace($page_date, $_POST['year'], 0, 4);
@@ -156,11 +161,11 @@ function empty_textbox_blur(target) {
   }
 }
 </script>
-<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+<form action="<?php echo htmlentities($_SERVER['REQUEST_URI']); ?>" method="post">
   <input type="hidden" name="_IS_POST_BACK_" value=""/>
   <?php if ($succeed) { ?>
   <?php if ($page_state == 'publish') { ?>
-  <div class="updated">页面已发布。 <a href="<?php echo $mc_config['site_link']; ?>/?<?php echo $page_path; ?>/" target="_blank">查看页面</a></div>
+  <div class="updated">页面已发布。 <a href="<?php echo $mc_config['site_link']; ?>/?<?php echo urlencode($page_path); ?>/" target="_blank">查看页面</a></div>
   <?php } else { ?>
   <div class="updated">页面已保存到“草稿箱”。 <a href="page.php?state=draft">打开草稿箱</a></div>
   <?php } ?>
@@ -182,37 +187,37 @@ function empty_textbox_blur(target) {
     <div style="float:left">
     时间：
     <select name="year">
-      <option value=""></option>
+      <option value="">&nbsp;&nbsp;年</option>
 <?php $year = substr($page_date, 0, 4); for ($i = 1990; $i <= 2030; $i ++) { ?>
       <option value="<?php echo $i; ?>" <?php if ($year == $i) echo 'selected="selected";' ?>><?php echo $i; ?></option>
 <?php } ?>
     </select> -
     <select name="month">
-      <option value=""></option>
+      <option value="">月</option>
 <?php $month = substr($page_date, 5, 2); for ($i = 1; $i <= 12; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($month == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select> -
     <select name="day">
-      <option value=""></option>
+      <option value="">日</option>
 <?php $day = substr($page_date, 8, 2); for ($i = 1; $i <= 31; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($day == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select>&nbsp;
     <select name="hourse">
-      <option value=""></option>
+      <option value="">时</option>
 <?php $hourse = substr($page_time, 0, 2); for ($i = 0; $i <= 23; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($hourse == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select> :
     <select name="minute">
-      <option value=""></option>
+      <option value="">分</option>
 <?php $minute = substr($page_time, 3, 2); for ($i = 0; $i <= 59; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($minute == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
     </select> :
     <select name="second">
-      <option value=""></option>
+      <option value="">秒</option>
 <?php $second = substr($page_time, 6, 2); for ($i = 0; $i <= 59; $i ++) { $m = sprintf("%02d", $i); ?>
       <option value="<?php echo $m; ?>" <?php if ($second == $m) echo 'selected="selected";' ?>><?php echo $m; ?></option>
 <?php } ?>
