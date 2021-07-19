@@ -13,6 +13,7 @@ $ignores = array(
   'build.php',
   'install.php',
   'install_template.txt',
+  'mc-debug'
 );
 
 $files = '';
@@ -27,7 +28,7 @@ $template = str_replace('/*MINICMS_FILES*/', $files, $template);
 file_put_contents("install.php", $template);
 
 function build($dirs, &$files) {
-  global $ignores;
+	global $ignores;
 
 	foreach ($dirs as $dir) {
 		if (!is_dir($dir)) {
@@ -37,17 +38,18 @@ function build($dirs, &$files) {
 
 		if ($dh = opendir($dir)) {
 			$sub_dirs = array();
+
 			while (($item = readdir($dh)) !== false) {
 				if ($item[0] == '.')
 					continue;
 
-        if ($dir == '.')
-          $file = $item;
-        else
-				  $file = $dir."/".$item;
+				if ($dir == '.')
+					$file = $item;
+				else
+					$file = $dir."/".$item;
 
-        if (in_array($file, $ignores))
-          continue;
+				if (in_array($file, $ignores))
+					continue;
 
 				if (is_dir($file)) {
 					$sub_dirs[] = $file;
@@ -57,6 +59,7 @@ function build($dirs, &$files) {
 					$files .= "');\n";
 				}
 			}
+
 			closedir($dh);
 			build($sub_dirs, $files);
 		} else {
